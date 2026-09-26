@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="128" fill="#F5EFE6"/>
+  <!-- Halo suave -->
+  <circle cx="256" cy="230" r="140" fill="url(#haloGrad)" opacity="0.45"/>
+  <!-- Llama de vela estilizada -->
+  <path d="M256 120 C230 190, 200 240, 200 290 C200 330, 225 360, 256 360 C287 360, 312 330, 312 290 C312 240, 282 190, 256 120 Z" fill="url(#flameGrad)" />
+  <!-- Núcleo cálido interior -->
+  <path d="M256 220 C242 260, 230 280, 230 310 C230 330, 241 345, 256 345 C271 345, 282 330, 282 310 C282 280, 270 260, 256 220 Z" fill="#FFF2CE" />
+  <!-- Base de la vela -->
+  <rect x="226" y="360" width="60" height="90" rx="8" fill="#E8DEC9" />
+  <line x1="256" y1="345" x2="256" y2="360" stroke="#7A6850" stroke-width="4" stroke-linecap="round"/>
+  <!-- Rama de olivo sutil de paz -->
+  <path d="M190 410 Q256 440 322 410" fill="none" stroke="#8A9D87" stroke-width="5" stroke-linecap="round"/>
+  
+  <defs>
+    <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E2B246" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#F5EFE6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="flameGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFDE7A"/>
+      <stop offset="60%" stop-color="#F39C12"/>
+      <stop offset="100%" stop-color="#E67E22"/>
+    </linearGradient>
+  </defs>
+</svg>

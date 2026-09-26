@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Cinzel:wght@400..700&family=Cormorant+Garamond:ital,wght@0,400..700;1,400..700&family=Inter:wght@300..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,wght@0,300..700;1,300..700&family=Montserrat:wght@300..700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #fbf9f5;
+  --foreground: #2d2926;
+  --card: #ffffff;
+  --card-foreground: #2d2926;
+  --card-border: #ede7de;
+  --primary: #c29837;
+  --primary-foreground: #ffffff;
+  --muted: #f2ede4;
+  --muted-foreground: #766f68;
+  --accent: #e8ded1;
+  --accent-foreground: #2d2926;
+  --candle-glow: rgba(226, 172, 60, 0.45);
+  --candle-flame: #ffb833;
+  --sage: #758774;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-primary: var(--primary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-sage: var(--sage);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Tipografía de respeto solemne */
+.font-memorial {
+  font-family: "Georgia", "Cambria", "Times New Roman", serif;
+  letter-spacing: -0.01em;
+}
+
+.font-script {
+  font-family: "Palatino", "Book Antiqua", "Georgia", serif;
+  font-style: italic;
+}
+
+/* Las 8 familias tipográficas seleccionables */
+.font-serif-cormorant { font-family: 'Cormorant Garamond', Georgia, serif; }
+.font-serif-cinzel { font-family: 'Cinzel', Georgia, serif; }
+.font-serif-playfair { font-family: 'Playfair Display', Georgia, serif; }
+.font-sans-inter { font-family: 'Inter', -apple-system, sans-serif; }
+.font-serif-lora { font-family: 'Lora', Georgia, serif; }
+.font-serif-merriweather { font-family: 'Merriweather', Georgia, serif; }
+.font-serif-bodoni { font-family: 'Bodoni Moda', Georgia, serif; }
+.font-sans-montserrat { font-family: 'Montserrat', -apple-system, sans-serif; }
+
+/* Efectos visuales de respeto y espiritualidad */
+.candle-glow-box {
+  box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.35);
+}
+
+.subtle-paper-shadow {
+  box-shadow: 0 4px 20px -2px rgba(45, 41, 38, 0.05), 0 2px 6px -1px rgba(45, 41, 38, 0.02);
+}
+
+/* Animación sutil de llama de vela virtual */
+@keyframes flameFlicker {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 8px rgba(255, 179, 44, 0.7));
+  }
+  25% {
+    transform: scale(1.04, 0.96) rotate(1deg);
+    opacity: 0.88;
+    filter: drop-shadow(0 0 12px rgba(255, 160, 20, 0.8));
+  }
+  50% {
+    transform: scale(0.97, 1.03) rotate(-0.5deg);
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(255, 195, 77, 0.9));
+  }
+  75% {
+    transform: scale(1.02, 0.98) rotate(1.5deg);
+    opacity: 0.9;
+    filter: drop-shadow(0 0 7px rgba(255, 150, 0, 0.65));
+  }
+}
+
+.animate-flame {
+  animation: flameFlicker 2.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+/* Resplandor ambiental de capilla */
+.ambient-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(226, 172, 60, 0.09) 0%, rgba(251, 249, 245, 0) 70%);
+}
+
+.dark .ambient-glow {
+  background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.12) 0%, rgba(16, 18, 22, 0) 70%);
+}
