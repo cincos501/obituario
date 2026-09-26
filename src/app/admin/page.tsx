@@ -216,24 +216,24 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
   const premiumCount = memorials.filter((m) => m.planId !== 'esencial').length;
 
   return (
-    <div className="min-h-screen bg-[#FBF9F5] dark:bg-[#101216] text-[#2D2926] dark:text-[#EAE6DF] flex flex-col selection:bg-[#E8DED1]">
+    <div className="min-h-screen bg-[#FBF9F5] text-[#2D2926] flex flex-col selection:bg-[#E8DED1]">
       <Navbar />
 
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-10">
         {notification && (
-          <div className="fixed top-20 right-6 z-50 bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+          <div className="fixed top-20 right-6 z-50 bg-[#8C6B32] text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 animate-in fade-in">
             <Check className="w-4 h-4" />
             <span>{notification}</span>
           </div>
         )}
 
-        {/* Encabezado del Administrador de Plataforma (sin pills ni badges) */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE4D8] dark:border-[#282E39]">
+        {/* Encabezado del Administrador de Plataforma */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#EAE4D8]">
           <div>
-            <h1 className="font-memorial text-2xl sm:text-3xl text-[#2D2926] dark:text-[#EAE6DF] font-normal">
+            <h1 className="font-memorial text-2xl sm:text-3xl text-[#2D2926] font-normal">
               Gestión Maestra de Clientes y Planes
             </h1>
-            <p className="text-xs text-[#7A7167] dark:text-[#9A9388] mt-1">
+            <p className="text-xs text-[#7A7167] mt-1">
               Registra nuevos compradores, entrega accesos de administración por WhatsApp y gestiona membresías activas.
             </p>
           </div>
@@ -248,7 +248,7 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
                 setRegPin(Math.floor(1000 + Math.random() * 9000).toString());
                 setShowRegisterModal(true);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] transition-colors shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors shadow-sm cursor-pointer"
             >
               <PlusCircle className="w-3.5 h-3.5" />
               <span>Registrar Cliente y Accesos</span>
@@ -256,9 +256,9 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
           </div>
         </div>
 
-        {/* Métricas Comerciales de Plataforma (Solo métricas SaaS de negocio) */}
+        {/* Métricas Comerciales de Plataforma */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-[#EAE4D8] rounded-2xl p-4 shadow-sm">
             <div className="flex items-center justify-between text-[#8C847A] mb-2">
               <span className="text-xs font-medium">Memoriales Totales</span>
               <Users className="w-4 h-4 text-[#C29837]" />
@@ -267,25 +267,25 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
             <span className="text-[11px] text-[#758774] font-medium">Espacios habilitados</span>
           </div>
 
-          <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-[#EAE4D8] rounded-2xl p-4 shadow-sm">
             <div className="flex items-center justify-between text-[#8C847A] mb-2">
               <span className="text-xs font-medium">Facturación Acumulada</span>
               <DollarSign className="w-4 h-4 text-[#758774]" />
             </div>
             <p className="font-memorial text-2xl font-semibold">${revenueUSD} USD</p>
-            <span className="text-[11px] text-[#7A7167] dark:text-[#9A9388]">~{(revenueUSD * 6.96).toFixed(0)} Bs. cobrados</span>
+            <span className="text-[11px] text-[#7A7167]">~{(revenueUSD * 6.96).toFixed(0)} Bs. cobrados</span>
           </div>
 
-          <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-[#EAE4D8] rounded-2xl p-4 shadow-sm">
             <div className="flex items-center justify-between text-[#8C847A] mb-2">
               <span className="text-xs font-medium">Planes Premium Activos</span>
               <Layers className="w-4 h-4 text-[#C29837]" />
             </div>
             <p className="font-memorial text-2xl font-semibold">{premiumCount}</p>
-            <span className="text-[11px] text-[#7A7167] dark:text-[#9A9388]">Legado e Infinito</span>
+            <span className="text-[11px] text-[#7A7167]">Legado e Infinito</span>
           </div>
 
-          <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-2xl p-4 shadow-sm">
+          <div className="bg-white border border-[#EAE4D8] rounded-2xl p-4 shadow-sm">
             <div className="flex items-center justify-between text-[#8C847A] mb-2">
               <span className="text-xs font-medium">Clientes Registrados</span>
               <Sparkles className="w-4 h-4 text-[#758774]" />
@@ -297,9 +297,9 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
 
         {/* Modal / Notificación con credenciales generadas para WhatsApp */}
         {createdCredentials && (
-          <div className="mb-8 p-5 bg-[#FAF3E3] dark:bg-[#202530] border-2 border-[#C29837] rounded-3xl shadow-sm animate-in fade-in space-y-3">
+          <div className="mb-8 p-5 bg-[#FAF3E3] border-2 border-[#C29837] rounded-3xl shadow-sm animate-in fade-in space-y-3">
             <div className="flex items-start justify-between">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#8C6415] dark:text-[#E5B84A]">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#8C6415]">
                 <KeyRound className="w-4 h-4 text-[#C29837]" />
                 <span>Credenciales de Acceso Generadas para {createdCredentials.clientName}</span>
               </div>
@@ -311,7 +311,7 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
               </button>
             </div>
 
-            <div className="bg-white dark:bg-[#15181E] p-4 rounded-2xl border border-[#EAE4D8] dark:border-[#282E39] text-xs space-y-2">
+            <div className="bg-white p-4 rounded-2xl border border-[#EAE4D8] text-xs space-y-2">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
                 <p><span className="text-[#8C847A]">Plan:</span> <b>{createdCredentials.planName}</b></p>
                 <p><span className="text-[#8C847A]">Correo:</span> <b>{createdCredentials.clientEmail}</b></p>
@@ -348,7 +348,7 @@ Quedamos a su disposición.`;
               <Link
                 href={createdCredentials.familyUrl}
                 target="_blank"
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-xs"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold cursor-pointer shadow-xs"
               >
                 <ExternalLink className="w-3.5 h-3.5" />
                 <span>Abrir Panel del Cliente</span>
@@ -358,21 +358,21 @@ Quedamos a su disposición.`;
         )}
 
         {/* TABLA PRINCIPAL DE CLIENTES Y GESTIÓN DE CUOTAS */}
-        <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-3xl overflow-hidden shadow-sm">
-          <div className="p-5 border-b border-[#F2ECE1] dark:border-[#282E39] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-white border border-[#EAE4D8] rounded-3xl overflow-hidden shadow-sm">
+          <div className="p-5 border-b border-[#F2ECE1] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-memorial text-lg text-[#2D2926] dark:text-[#EAE6DF]">
+              <h3 className="font-memorial text-lg text-[#2D2926]">
                 Clientes y Memoriales Activos ({memorials.length})
               </h3>
-              <p className="text-xs text-[#7A7167] dark:text-[#9A9388]">
+              <p className="text-xs text-[#7A7167]">
                 Envía credenciales de acceso por WhatsApp o ajusta planes y cuotas para cada familia.
               </p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-[#524B44] dark:text-[#C5BEB5]">
-              <thead className="bg-[#FAF7F2] dark:bg-[#121418] text-[#80766B] dark:text-[#9E978D] uppercase font-semibold text-[10px] tracking-wider border-b border-[#F2ECE1] dark:border-[#282E39]">
+            <table className="w-full text-left text-xs text-[#524B44]">
+              <thead className="bg-[#FAF7F2] text-[#80766B] uppercase font-semibold text-[10px] tracking-wider border-b border-[#F2ECE1]">
                 <tr>
                   <th className="py-3.5 px-4">Memorial</th>
                   <th className="py-3.5 px-4">Cliente / Titular</th>
@@ -381,16 +381,16 @@ Quedamos a su disposición.`;
                   <th className="py-3.5 px-4 text-right">Accesos y WhatsApp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#F2ECE1] dark:divide-[#282E39]">
+              <tbody className="divide-y divide-[#F2ECE1]">
                 {memorials.map((memorial) => (
-                  <tr key={memorial.id} className="hover:bg-[#FAF8F5] dark:hover:bg-[#1C2028] transition-colors">
+                  <tr key={memorial.id} className="hover:bg-[#FAF8F5] transition-colors">
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full overflow-hidden border border-[#D8CABE] dark:border-[#38404F] bg-[#F2ECE1] shrink-0">
+                        <div className="w-9 h-9 rounded-full overflow-hidden border border-[#D8CABE] bg-[#F2ECE1] shrink-0">
                           <img src={memorial.mainPhotoUrl} alt="" className="w-full h-full object-cover" />
                         </div>
                         <div>
-                          <p className="font-semibold text-[#2D2926] dark:text-[#EAE6DF] text-xs sm:text-sm">
+                          <p className="font-semibold text-[#2D2926] text-xs sm:text-sm">
                             {memorial.fullName}
                           </p>
                           <Link
@@ -406,7 +406,7 @@ Quedamos a su disposición.`;
                     </td>
 
                     <td className="py-3.5 px-4">
-                      <p className="font-medium text-[#2D2926] dark:text-[#EAE6DF]">{memorial.ownerName || 'Familiar Registrado'}</p>
+                      <p className="font-medium text-[#2D2926]">{memorial.ownerName || 'Familiar Registrado'}</p>
                       <p className="text-[11px] text-[#8C847A]">{memorial.ownerEmail || 'Sin correo registrado'}</p>
                       <p className="text-[10px] text-[#A67C24] font-mono mt-0.5">PIN: {memorial.accessPin || '1234'}</p>
                     </td>
@@ -415,7 +415,7 @@ Quedamos a su disposición.`;
                       <select
                         value={memorial.planId}
                         onChange={(e) => handleChangePlan(memorial.id, e.target.value as SubscriptionPlanId)}
-                        className="px-2.5 py-1.5 rounded-lg border border-[#D8CABE] dark:border-[#38404F] bg-white dark:bg-[#1E232D] text-xs font-semibold text-[#2D2926] dark:text-[#EAE6DF] focus:outline-none"
+                        className="px-2.5 py-1.5 rounded-lg border border-[#D8CABE] bg-white text-xs font-semibold text-[#2D2926] focus:outline-none"
                       >
                         <option value="esencial">Plan Esencial ($19 USD / 135 Bs)</option>
                         <option value="legado">Plan Homenaje Legado ($49 USD / 340 Bs)</option>
@@ -426,7 +426,7 @@ Quedamos a su disposición.`;
                     <td className="py-3.5 px-4">
                       <button
                         onClick={() => openCustomLimitsModal(memorial)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#D8CABE] dark:border-[#38404F] bg-white dark:bg-[#1E232D] text-xs font-medium hover:bg-[#F2ECE1] dark:hover:bg-[#282F3D] cursor-pointer"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-[#D8CABE] bg-white text-xs font-medium hover:bg-[#F2ECE1] cursor-pointer"
                       >
                         <Sliders className="w-3 h-3 text-[#C29837]" />
                         <span>Ajustar Cuotas</span>
@@ -437,7 +437,7 @@ Quedamos a su disposición.`;
                       <div className="flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => handleCopyWhatsAppMessage(memorial)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FAF3E3] dark:bg-[#202530] text-[#8C6415] dark:text-[#E5B84A] border border-[#E8D7B0] dark:border-[#38404F] hover:bg-[#F5E8C8] cursor-pointer transition-colors"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold bg-[#FAF3E3] text-[#8C6415] border border-[#E8D7B0] hover:bg-[#F5E8C8] cursor-pointer transition-colors"
                           title="Copia el mensaje completo con credenciales para enviarlo por WhatsApp"
                         >
                           <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
@@ -449,7 +449,7 @@ Quedamos a su disposición.`;
                           className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                             copiedSlug === memorial.slug
                               ? 'bg-[#EBF0EB] text-[#4A634E] border border-[#CDE0CE]'
-                              : 'bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] hover:bg-[#433E3A]'
+                              : 'bg-[#8C6B32] hover:bg-[#785924] text-white'
                           }`}
                           title="Copia el enlace directo de administración familiar"
                         >
@@ -477,19 +477,19 @@ Quedamos a su disposición.`;
         {/* MODAL: REGISTRAR NUEVO CLIENTE MANUALMENTE */}
         {showRegisterModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white dark:bg-[#181B22] border border-[#DFCDB8] dark:border-[#38404F] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1] dark:border-[#282E39]">
+            <div className="bg-white border-2 border-[#C29837] rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1]">
                 <div>
-                  <h3 className="font-memorial text-xl text-[#2D2926] dark:text-white">
+                  <h3 className="font-memorial text-xl text-[#2D2926]">
                     Registrar Nuevo Cliente
                   </h3>
-                  <p className="text-[11px] text-[#7A7167] dark:text-[#9A9388]">
+                  <p className="text-[11px] text-[#7A7167]">
                     Genera el usuario para la familia. Ellos llenarán la biografía, fechas y recuerdos desde su panel.
                   </p>
                 </div>
                 <button
                   onClick={() => setShowRegisterModal(false)}
-                  className="p-1 text-[#8C847A] hover:text-[#2D2926] dark:hover:text-white cursor-pointer"
+                  className="p-1 text-[#8C847A] hover:text-[#2D2926] cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -497,7 +497,7 @@ Quedamos a su disposición.`;
 
               <form onSubmit={handleRegisterClient} className="space-y-3 text-xs">
                 <div>
-                  <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                  <label className="block font-semibold mb-1 text-[#4A4540]">
                     Plan de Preservación Contratado
                   </label>
                   <div className="grid grid-cols-3 gap-2">
@@ -508,8 +508,8 @@ Quedamos a su disposición.`;
                         onClick={() => setRegPlanId(plan.id)}
                         className={`p-2.5 rounded-xl border text-left cursor-pointer transition-all ${
                           regPlanId === plan.id
-                            ? 'border-[#C29837] bg-[#FAF3E3] dark:bg-[#2A2E38] text-[#2D2926] dark:text-white font-semibold'
-                            : 'border-[#EAE4D8] dark:border-[#38404F] bg-white dark:bg-[#15181E] text-[#6E665D]'
+                            ? 'border-[#C29837] bg-[#FAF3E3] text-[#2D2926] font-semibold'
+                            : 'border-[#EAE4D8] bg-white text-[#6E665D]'
                         }`}
                       >
                         <p className="text-xs truncate">{plan.name.replace('Plan ', '')}</p>
@@ -521,7 +521,7 @@ Quedamos a su disposición.`;
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                    <label className="block font-semibold mb-1 text-[#4A4540]">
                       Nombre Completo del Cliente / Titular *
                     </label>
                     <input
@@ -530,12 +530,12 @@ Quedamos a su disposición.`;
                       placeholder="Ej. María Elena Mendoza"
                       value={regClientName}
                       onChange={(e) => handleClientNameChange(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                    <label className="block font-semibold mb-1 text-[#4A4540]">
                       Correo Electrónico del Cliente *
                     </label>
                     <input
@@ -544,14 +544,14 @@ Quedamos a su disposición.`;
                       placeholder="cliente@ejemplo.com"
                       value={regClientEmail}
                       onChange={(e) => setRegClientEmail(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                    <label className="block font-semibold mb-1 text-[#4A4540]">
                       Teléfono / WhatsApp (Opcional)
                     </label>
                     <input
@@ -559,12 +559,12 @@ Quedamos a su disposición.`;
                       placeholder="Ej. +591 70000000"
                       value={regClientPhone}
                       onChange={(e) => setRegClientPhone(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                    <label className="block font-semibold mb-1 text-[#4A4540]">
                       PIN o Contraseña Temporal
                     </label>
                     <input
@@ -572,16 +572,16 @@ Quedamos a su disposición.`;
                       required
                       value={regPin}
                       onChange={(e) => setRegPin(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-mono font-bold text-[#C29837]"
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-mono font-bold text-[#C29837]"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block font-semibold mb-1 text-[#4A4540] dark:text-[#E8E5DF]">
+                  <label className="block font-semibold mb-1 text-[#4A4540]">
                     Identificador de Memorial (Slug web)
                   </label>
-                  <div className="flex items-center gap-1 px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs">
+                  <div className="flex items-center gap-1 px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs">
                     <span className="text-[#8C847A]">/memorial/</span>
                     <input
                       type="text"
@@ -596,7 +596,7 @@ Quedamos a su disposición.`;
                   </p>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F2ECE1] dark:border-[#282E39]">
+                <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F2ECE1]">
                   <button
                     type="button"
                     onClick={() => setShowRegisterModal(false)}
@@ -606,7 +606,7 @@ Quedamos a su disposición.`;
                   </button>
                   <button
                     type="submit"
-                    className="flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm"
+                    className="flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
                   >
                     <Send className="w-3.5 h-3.5" />
                     <span>Crear Cliente y Generar Accesos</span>
@@ -620,19 +620,19 @@ Quedamos a su disposición.`;
         {/* MODAL: PERSONALIZACIÓN DE CUOTAS DE CLIENTE */}
         {editingMemorial && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-            <div className="bg-white dark:bg-[#181B22] border border-[#DFCDB8] dark:border-[#38404F] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1] dark:border-[#282E39]">
+            <div className="bg-white border-2 border-[#C29837] rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1]">
                 <div>
-                  <h3 className="font-memorial text-lg text-[#2D2926] dark:text-white">
+                  <h3 className="font-memorial text-lg text-[#2D2926]">
                     Personalizar Cuota de Cliente
                   </h3>
-                  <p className="text-[11px] text-[#7A7167] dark:text-[#9A9388]">
+                  <p className="text-[11px] text-[#7A7167]">
                     {editingMemorial.fullName}
                   </p>
                 </div>
                 <button
                   onClick={() => setEditingMemorial(null)}
-                  className="p-1 text-[#8C847A] hover:text-[#2D2926] dark:hover:text-white cursor-pointer"
+                  className="p-1 text-[#8C847A] hover:text-[#2D2926] cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -647,7 +647,7 @@ Quedamos a su disposición.`;
                     type="number"
                     value={customPhotoLimit}
                     onChange={(e) => setCustomPhotoLimit(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                   />
                   <p className="text-[10px] text-[#8C847A] mt-0.5">
                     Ej: 5 (Esencial), 35 (Legado), 999 (Ilimitado).
@@ -662,7 +662,7 @@ Quedamos a su disposición.`;
                     type="number"
                     value={customMilestoneLimit}
                     onChange={(e) => setCustomMilestoneLimit(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                   />
                   <p className="text-[10px] text-[#8C847A] mt-0.5">
                     Ej: 10 (Esencial), 15 (Legado), 25 (Infinito).
@@ -677,12 +677,12 @@ Quedamos a su disposición.`;
                     type="number"
                     value={customMaxServices}
                     onChange={(e) => setCustomMaxServices(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                   />
                 </div>
 
                 <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#121418] border border-[#EAE4D8] dark:border-[#282E39]">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE4D8]">
                     <span className="font-semibold text-[11px]">Fotos en Hitos Históricos</span>
                     <input
                       type="checkbox"
@@ -692,7 +692,7 @@ Quedamos a su disposición.`;
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#121418] border border-[#EAE4D8] dark:border-[#282E39]">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE4D8]">
                     <span className="font-semibold text-[11px]">Fotos en Capillas y Cementerios</span>
                     <input
                       type="checkbox"
@@ -702,7 +702,7 @@ Quedamos a su disposición.`;
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#121418] border border-[#EAE4D8] dark:border-[#282E39]">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE4D8]">
                     <span className="font-semibold text-[11px]">Fotos en Velas Virtuales</span>
                     <input
                       type="checkbox"
@@ -712,7 +712,7 @@ Quedamos a su disposición.`;
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] dark:bg-[#121418] border border-[#EAE4D8] dark:border-[#282E39]">
+                  <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE4D8]">
                     <span className="font-semibold text-[11px]">Habilitar Subida de Videos</span>
                     <input
                       type="checkbox"
@@ -731,12 +731,12 @@ Quedamos a su disposición.`;
                     type="number"
                     value={customStorageMB}
                     onChange={(e) => setCustomStorageMB(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FAF7F2] dark:bg-[#121418] text-xs font-semibold"
+                    className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs font-semibold"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F2ECE1] dark:border-[#282E39]">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#F2ECE1]">
                 <button
                   type="button"
                   onClick={() => setEditingMemorial(null)}
@@ -747,7 +747,7 @@ Quedamos a su disposición.`;
                 <button
                   type="button"
                   onClick={handleSaveCustomLimits}
-                  className="px-5 py-2 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] cursor-pointer"
+                  className="px-5 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold cursor-pointer shadow-sm transition-colors"
                 >
                   Guardar Cuotas
                 </button>

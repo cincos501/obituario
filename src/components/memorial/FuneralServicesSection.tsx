@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { FuneralService, ServiceType } from '../../types/memorial';
-import { MapPin, Clock, Calendar, Video, ExternalLink, Church } from 'lucide-react';
+import { Calendar, Clock, MapPin, Church, ExternalLink, Video } from 'lucide-react';
 
 interface Props {
   services: FuneralService[];
@@ -14,15 +14,15 @@ export const FuneralServicesSection = ({ services }: Props) => {
   const getServiceBadge = (type: ServiceType) => {
     switch (type) {
       case 'velatorio':
-        return { label: 'Velatorio y Capilla Ardiente', color: 'bg-[#F2ECE1] dark:bg-[#2A2E38] text-[#63574A] dark:text-[#E2D5C3] border-[#DFD3C3] dark:border-[#38404F]' };
+        return { label: 'Velatorio y Capilla Ardiente', color: 'bg-[#F2ECE1] text-[#63574A] border-[#DFD3C3]' };
       case 'misa_cuerpo_presente':
-        return { label: 'Misa de Cuerpo Presente', color: 'bg-[#EBF0EB] dark:bg-[#1C2720] text-[#4A634E] dark:text-[#A7D1AC] border-[#CDE0CE] dark:border-[#2D3F33]' };
+        return { label: 'Misa de Cuerpo Presente', color: 'bg-[#EBF0EB] text-[#4A634E] border-[#CDE0CE]' };
       case 'sepelio':
-        return { label: 'Sepelio y Descanso Eterno', color: 'bg-[#F0EBEE] dark:bg-[#282226] text-[#634A59] dark:text-[#D9B5CB] border-[#DFCFD9] dark:border-[#42333D]' };
+        return { label: 'Sepelio y Descanso Eterno', color: 'bg-[#F0EBEE] text-[#634A59] border-[#DFCFD9]' };
       case 'cremacion':
-        return { label: 'Ceremonia de Cremación', color: 'bg-[#F5EFE6] dark:bg-[#2D261E] text-[#7A5B36] dark:text-[#E5B585] border-[#E8DAC6] dark:border-[#483A2C]' };
+        return { label: 'Ceremonia de Cremación', color: 'bg-[#F5EFE6] text-[#7A5B36] border-[#E8DAC6]' };
       default:
-        return { label: 'Ceremonia de Homenaje', color: 'bg-[#F2ECE1] dark:bg-[#2A2E38] text-[#63574A] dark:text-[#E2D5C3] border-[#DFD3C3] dark:border-[#38404F]' };
+        return { label: 'Ceremonia de Homenaje', color: 'bg-[#F2ECE1] text-[#63574A] border-[#DFD3C3]' };
     }
   };
 
@@ -37,14 +37,14 @@ export const FuneralServicesSection = ({ services }: Props) => {
   return (
     <section className="my-12">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#9E9488] dark:text-[#A69D92] mb-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#9E9488] mb-2">
           <Church className="w-3.5 h-3.5 text-[#C29837]" />
           <span>Servicios y Ceremonias</span>
         </div>
-        <h2 className="font-memorial text-2xl sm:text-3xl text-[#2D2926] dark:text-[#EAE6DF]">
+        <h2 className="font-memorial text-2xl sm:text-3xl text-[#2D2926]">
           Acompañamiento y Despedida
         </h2>
-        <p className="text-xs sm:text-sm text-[#736B63] dark:text-[#9A9388] max-w-md mx-auto mt-1">
+        <p className="text-xs sm:text-sm text-[#736B63] max-w-md mx-auto mt-1">
           Información para acompañar a la familia en las ceremonias religiosas y homenajes.
         </p>
       </div>
@@ -55,12 +55,12 @@ export const FuneralServicesSection = ({ services }: Props) => {
           return (
             <div
               key={service.id}
-              className="bg-[#FFFFFF] dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
+              className="bg-[#FFFFFF] border border-[#EAE4D8] rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
             >
               <div>
                 {/* Foto opcional del lugar (Capilla, Templo o Pabellón) */}
                 {service.photoUrl && (
-                  <div className="h-36 w-full relative overflow-hidden bg-[#F2ECE1] dark:bg-[#1B202A] border-b border-[#EAE4D8] dark:border-[#282E39]">
+                  <div className="h-36 w-full relative overflow-hidden bg-[#F2ECE1] border-b border-[#EAE4D8]">
                     <img
                       src={service.photoUrl}
                       alt={service.locationName}
@@ -77,14 +77,14 @@ export const FuneralServicesSection = ({ services }: Props) => {
                     {badge.label}
                   </span>
 
-                  <h3 className="font-memorial text-lg font-semibold text-[#2D2926] dark:text-[#EAE6DF] mb-3 leading-snug">
+                  <h3 className="font-memorial text-lg font-semibold text-[#2D2926] mb-3 leading-snug">
                     {service.title}
                   </h3>
 
-                  <div className="space-y-2.5 text-xs text-[#5C554D] dark:text-[#C5BEB5] mb-4">
+                  <div className="space-y-2.5 text-xs text-[#5C554D] mb-4">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-[#C29837] shrink-0" />
-                      <span className="font-medium text-[#2D2926] dark:text-white">{service.date}</span>
+                      <span className="font-medium text-[#2D2926]">{service.date}</span>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -95,21 +95,21 @@ export const FuneralServicesSection = ({ services }: Props) => {
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-[#C29837] shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-medium text-[#2D2926] dark:text-white">{service.locationName}</p>
-                        <p className="text-[#80776D] dark:text-[#999] text-[11px]">{service.address}</p>
+                        <p className="font-medium text-[#2D2926]">{service.locationName}</p>
+                        <p className="text-[#80776D] text-[11px]">{service.address}</p>
                       </div>
                     </div>
                   </div>
 
                   {service.notes && (
-                    <p className="text-[11px] text-[#7A7167] dark:text-[#A69D92] italic bg-[#FAF7F2] dark:bg-[#121418] p-2.5 rounded-xl border border-[#EDE5DA] dark:border-[#282E39] mb-4">
+                    <p className="text-[11px] text-[#7A7167] italic bg-[#FAF7F2] p-2.5 rounded-xl border border-[#EDE5DA] mb-4">
                       {service.notes}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="p-4 px-6 border-t border-[#F2ECE1] dark:border-[#282E39] flex items-center justify-between gap-2">
+              <div className="p-4 px-6 border-t border-[#F2ECE1] flex items-center justify-between gap-2">
                 {service.googleMapsUrl && (
                   <a
                     href={service.googleMapsUrl}
@@ -127,7 +127,7 @@ export const FuneralServicesSection = ({ services }: Props) => {
                     href={service.livestreamUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#8A5B36] dark:text-[#E5B585] hover:underline"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-[#8A5B36] hover:underline"
                   >
                     <Video className="w-3.5 h-3.5" />
                     <span>Transmisión</span>
@@ -136,7 +136,7 @@ export const FuneralServicesSection = ({ services }: Props) => {
 
                 <button
                   onClick={() => downloadCalendarEvent(service)}
-                  className="text-xs text-[#7A7167] dark:text-[#9A9388] hover:text-[#2D2926] dark:hover:text-white underline ml-auto cursor-pointer"
+                  className="text-xs text-[#7A7167] hover:text-[#2D2926] underline ml-auto cursor-pointer"
                 >
                   Agendar
                 </button>

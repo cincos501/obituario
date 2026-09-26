@@ -100,17 +100,17 @@ export const CandleTributeSection = ({
 
       setFeedbackNotice(messageStatusNotice);
       setAuthorName('');
-      setMessage('');
       setRelationship('');
+      setMessage('');
       setTributePhotoUrl('');
+      setShowPhotoInput(false);
     } catch (err) {
-      console.error(err);
-      alert('Hubo un error al enviar el homenaje.');
+      console.error('Error al enviar tributo:', err);
+      alert('Hubo un inconveniente al registrar tu condolencia. Inténtalo nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
-
 
   const filteredTributes = publicTributes.filter((t) => {
     if (activeTab === 'candles') return t.tributeType === 'candle';
@@ -122,31 +122,31 @@ export const CandleTributeSection = ({
     <section className="my-16">
       {/* Encabezado de la sección */}
       <div className="text-center mb-10">
-        <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#9E9488] dark:text-[#A69D92] mb-2">
+        <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-widest text-[#9E9488] mb-2">
           <Sparkles className="w-3.5 h-3.5 text-[#C29837]" />
           <span>Libro de Recuerdos y Luz</span>
         </div>
-        <h2 className="font-memorial text-2xl sm:text-4xl text-[#2D2926] dark:text-[#EAE6DF]">
+        <h2 className="font-memorial text-2xl sm:text-4xl text-[#2D2926]">
           Velas y Mensajes de Afecto
         </h2>
-        <p className="text-xs sm:text-sm text-[#736B63] dark:text-[#9A9388] max-w-lg mx-auto mt-2">
+        <p className="text-xs sm:text-sm text-[#736B63] max-w-lg mx-auto mt-2">
           Enciende una vela virtual, envía una flor o comparte una fotografía entrañable de su vida juntos.
         </p>
 
         {/* Garantía de respeto y moderación y contador de ofrendas */}
         <div className="flex flex-wrap items-center justify-center gap-2 mt-3">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3ECE0] dark:bg-[#1E232D] text-[#7A6126] dark:text-[#E5B84A] text-[11px] font-medium border border-[#E0D3C1] dark:border-[#38404F]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F3ECE0] text-[#7A6126] text-[11px] font-medium border border-[#E0D3C1]">
             <ShieldCheck className="w-3.5 h-3.5 text-[#758774]" />
             <span>Espacio protegido y moderado con respeto familiar</span>
           </div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] dark:bg-[#15181E] text-[#6E665D] dark:text-[#A69D92] text-[11px] font-medium border border-[#EAE4D8] dark:border-[#282E39]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF7F2] text-[#6E665D] text-[11px] font-medium border border-[#EAE4D8]">
             <Flame className="w-3 h-3 text-[#C29837]" />
             <span>{publicTributes.length} de {maxCandlesAndFlowers} ofrendas realizadas</span>
           </div>
         </div>
 
         {quotaNotice && (
-          <div className="mt-4 max-w-md mx-auto p-3 rounded-xl bg-[#FFF9ED] dark:bg-[#2A2312] border border-[#F3DFC0] dark:border-[#524118] text-[#8C6415] dark:text-[#F3CE72] text-xs leading-relaxed animate-in fade-in">
+          <div className="mt-4 max-w-md mx-auto p-3 rounded-xl bg-[#FFF9ED] border border-[#F3DFC0] text-[#8C6415] text-xs leading-relaxed animate-in fade-in">
             {quotaNotice}
           </div>
         )}
@@ -158,11 +158,11 @@ export const CandleTributeSection = ({
             disabled={isQuotaReached}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-md transition-all ${
               isQuotaReached
-                ? 'bg-[#EAE4D8] dark:bg-[#2A2E38] text-[#A69D92] cursor-not-allowed'
-                : 'bg-[#2D2926] dark:bg-[#C29837] text-[#FBF9F5] dark:text-[#101216] hover:bg-[#433E3A] cursor-pointer'
+                ? 'bg-[#EAE4D8] text-[#A69D92] cursor-not-allowed'
+                : 'bg-[#8C6B32] hover:bg-[#785924] text-white cursor-pointer'
             }`}
           >
-            <Flame className={`w-4 h-4 ${isQuotaReached ? 'text-[#A69D92]' : 'text-[#F5C354] dark:text-[#101216] animate-flame'}`} />
+            <Flame className={`w-4 h-4 ${isQuotaReached ? 'text-[#A69D92]' : 'text-[#F5C354] animate-flame'}`} />
             <span>{isQuotaReached ? 'Límite de Velas Alcanzado' : 'Encender Vela'}</span>
           </button>
           <button
@@ -170,11 +170,11 @@ export const CandleTributeSection = ({
             disabled={isQuotaReached}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold shadow-xs transition-colors ${
               isQuotaReached
-                ? 'bg-[#F2ECE1] dark:bg-[#1C2028] text-[#A69D92] border border-[#E0D8CB] cursor-not-allowed'
-                : 'bg-[#FAF7F2] dark:bg-[#1A1D24] text-[#4A4540] dark:text-[#E8E5DF] border border-[#DFCDB8] dark:border-[#2F3643] hover:bg-[#F3ECE0] dark:hover:bg-[#252B36] cursor-pointer'
+                ? 'bg-[#F2ECE1] text-[#A69D92] border border-[#E0D8CB] cursor-not-allowed'
+                : 'bg-white text-[#4A4540] border border-[#DFCDB8] hover:bg-[#F3ECE0] cursor-pointer'
             }`}
           >
-            <Flower2 className={`w-4 h-4 ${isQuotaReached ? 'text-[#A69D92]' : 'text-[#8A9D87]'}`} />
+            <Flower2 className={`w-4 h-4 ${isQuotaReached ? 'text-[#A69D92]' : 'text-[#758774]'}`} />
             <span>{isQuotaReached ? 'Límite de Flores Alcanzado' : 'Ofrendar Flor'}</span>
           </button>
         </div>
@@ -188,8 +188,8 @@ export const CandleTributeSection = ({
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer ${
               activeTab === tab
-                ? 'bg-[#EAE2D5] dark:bg-[#2A313E] text-[#2D2926] dark:text-white shadow-inner'
-                : 'text-[#857B72] dark:text-[#9A9388] hover:bg-[#F3ECE0] dark:hover:bg-[#1E232D]'
+                ? 'bg-[#EAE2D5] text-[#2D2926] shadow-inner'
+                : 'text-[#857B72] hover:bg-[#F3ECE0]'
             }`}
           >
             {tab === 'all' && `Todos (${publicTributes.length})`}
@@ -201,9 +201,9 @@ export const CandleTributeSection = ({
 
       {/* Muro de tributos */}
       {filteredTributes.length === 0 ? (
-        <div className="text-center py-12 px-4 bg-[#FAF7F2] dark:bg-[#171A20] border border-[#ECE5DC] dark:border-[#282E39] rounded-2xl max-w-xl mx-auto">
+        <div className="text-center py-12 px-4 bg-[#FAF7F2] border border-[#ECE5DC] rounded-2xl max-w-xl mx-auto">
           <Flame className="w-8 h-8 text-[#C29837] mx-auto mb-2 opacity-60" />
-          <p className="font-memorial text-base text-[#4F4943] dark:text-[#D4CFCA]">
+          <p className="font-memorial text-base text-[#4F4943]">
             Sé la primera persona en encender una luz o dejar un mensaje de cariño.
           </p>
           <button
@@ -218,32 +218,32 @@ export const CandleTributeSection = ({
           {filteredTributes.map((tribute) => (
             <div
               key={tribute.id}
-              className="bg-[#FFFFFF] dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-3xl p-5 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between"
+              className="bg-[#FFFFFF] border border-[#EAE4D8] rounded-3xl p-5 shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     {tribute.tributeType === 'candle' ? (
-                      <div className="w-8 h-8 rounded-full bg-[#FAF3E3] dark:bg-[#282E38] border border-[#E8D7B0] dark:border-[#3A4354] flex items-center justify-center text-[#E5A93C]">
+                      <div className="w-8 h-8 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] flex items-center justify-center text-[#E5A93C]">
                         <Flame className="w-4 h-4 animate-flame" />
                       </div>
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-[#F0F5F0] dark:bg-[#1E2922] border border-[#D1E0D1] dark:border-[#2D3F33] flex items-center justify-center text-[#758774]">
+                      <div className="w-8 h-8 rounded-full bg-[#F0F5F0] border border-[#D1E0D1] flex items-center justify-center text-[#758774]">
                         <Flower2 className="w-4 h-4" />
                       </div>
                     )}
                     <div>
-                      <h4 className="font-semibold text-xs sm:text-sm text-[#2D2926] dark:text-white">
+                      <h4 className="font-semibold text-xs sm:text-sm text-[#2D2926]">
                         {tribute.authorName}
                       </h4>
                       {tribute.relationship && (
-                        <p className="text-[10px] text-[#8C847A] dark:text-[#9A9388]">{tribute.relationship}</p>
+                        <p className="text-[10px] text-[#8C847A]">{tribute.relationship}</p>
                       )}
                     </div>
                   </div>
                 </div>
 
-                <p className="text-xs sm:text-sm text-[#544D46] dark:text-[#D4CFCA] font-script leading-relaxed mb-3">
+                <p className="text-xs sm:text-sm text-[#544D46] font-script leading-relaxed mb-3">
                   &ldquo;{tribute.message}&rdquo;
                 </p>
 
@@ -251,7 +251,7 @@ export const CandleTributeSection = ({
                 {tribute.photoUrl && (
                   <div
                     onClick={() => setSelectedPhotoPreview({ url: tribute.photoUrl!, author: tribute.authorName })}
-                    className="rounded-xl overflow-hidden border border-[#EAE4D8] dark:border-[#2E3544] mb-3 shadow-xs cursor-pointer group relative"
+                    className="rounded-xl overflow-hidden border border-[#EAE4D8] mb-3 shadow-xs cursor-pointer group relative"
                     title="Clic para ver en tamaño completo"
                   >
                     <img
@@ -266,7 +266,7 @@ export const CandleTributeSection = ({
                 )}
               </div>
 
-              <div className="pt-3 border-t border-[#F5EFE6] dark:border-[#282E39] flex items-center justify-between text-[10px] text-[#A69D92]">
+              <div className="pt-3 border-t border-[#F5EFE6] flex items-center justify-between text-[10px] text-[#A69D92]">
                 <span>
                   {new Date(tribute.createdAt).toLocaleDateString('es-ES', {
                     day: 'numeric',
@@ -286,36 +286,36 @@ export const CandleTributeSection = ({
 
       {/* Modal para Encender Vela o Dejar Flor */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#121417]/70 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[#FAF7F2] dark:bg-[#181B22] border border-[#DFCDB8] dark:border-[#2E3542] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white border-2 border-[#C29837] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div className="text-center mb-6">
-              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center bg-[#F3ECE0] dark:bg-[#252B37] border border-[#E2D5C3] dark:border-[#38404F]">
+              <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center bg-[#FAF3E3] border border-[#E8D7B0]">
                 {modalType === 'candle' ? (
                   <Flame className="w-6 h-6 text-[#E5A93C] animate-flame" />
                 ) : (
                   <Flower2 className="w-6 h-6 text-[#758774]" />
                 )}
               </div>
-              <h3 className="font-memorial text-2xl text-[#2D2926] dark:text-[#EAE6DF]">
+              <h3 className="font-memorial text-2xl text-[#2D2926]">
                 {modalType === 'candle' ? 'Encender una Vela Virtual' : 'Ofrendar Flores de Paz'}
               </h3>
-              <p className="text-xs text-[#736B63] dark:text-[#9A9388] mt-1">
+              <p className="text-xs text-[#736B63] mt-1">
                 Tu homenaje quedará encendido en el memorial como recuerdo imborrable.
               </p>
             </div>
 
             {feedbackNotice ? (
               <div className="text-center py-6 space-y-4">
-                <div className="w-12 h-12 rounded-full bg-[#EBF0EB] dark:bg-[#202722] text-[#4A634E] flex items-center justify-center mx-auto">
+                <div className="w-12 h-12 rounded-full bg-[#EBF0EB] text-[#4A634E] flex items-center justify-center mx-auto">
                   <ShieldCheck className="w-6 h-6" />
                 </div>
-                <p className="text-sm text-[#4A4540] dark:text-[#D4CFCA] font-sans leading-relaxed px-4">
+                <p className="text-sm text-[#4A4540] font-sans leading-relaxed px-4">
                   {feedbackNotice}
                 </p>
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-6 py-2.5 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] cursor-pointer"
+                  className="px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold cursor-pointer shadow-sm"
                 >
                   Entendido
                 </button>
@@ -323,7 +323,7 @@ export const CandleTributeSection = ({
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[#544D46] dark:text-[#C5BEB5] mb-1">
+                  <label className="block text-xs font-semibold text-[#544D46] mb-1">
                     Tu Nombre Completo *
                   </label>
                   <input
@@ -332,12 +332,12 @@ export const CandleTributeSection = ({
                     placeholder="Ej. Juan Pérez"
                     value={authorName}
                     onChange={(e) => setAuthorName(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FFFFFF] dark:bg-[#121418] text-xs sm:text-sm text-[#2D2926] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#544D46] dark:text-[#C5BEB5] mb-1">
+                  <label className="block text-xs font-semibold text-[#544D46] mb-1">
                     Parentesco o Relación
                   </label>
                   <input
@@ -345,12 +345,12 @@ export const CandleTributeSection = ({
                     placeholder="Ej. Hijo, Amigo de juventud, Compañero de trabajo"
                     value={relationship}
                     onChange={(e) => setRelationship(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FFFFFF] dark:bg-[#121418] text-xs sm:text-sm text-[#2D2926] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-[#544D46] dark:text-[#C5BEB5] mb-1">
+                  <label className="block text-xs font-semibold text-[#544D46] mb-1">
                     Tu Mensaje de Condolencia o Recuerdo *
                   </label>
                   <textarea
@@ -359,7 +359,7 @@ export const CandleTributeSection = ({
                     placeholder="Escribe una breve memoria, oración o mensaje reconfortante para la familia..."
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] dark:border-[#38404F] bg-[#FFFFFF] dark:bg-[#121418] text-xs sm:text-sm text-[#2D2926] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#C29837]/40 resize-none font-script"
+                    className="w-full px-3.5 py-2 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40 resize-none font-script"
                   />
                 </div>
 
@@ -370,9 +370,9 @@ export const CandleTributeSection = ({
                       <button
                         type="button"
                         onClick={() => setShowPhotoInput(true)}
-                        className="inline-flex items-center gap-1.5 text-xs text-[#C29837] font-semibold hover:underline cursor-pointer"
+                        className="inline-flex items-center gap-1.5 text-xs text-[#8C6B32] font-semibold hover:underline cursor-pointer"
                       >
-                        <Camera className="w-3.5 h-3.5" />
+                        <Camera className="w-3.5 h-3.5 text-[#C29837]" />
                         <span>+ Adjuntar una fotografía del recuerdo juntos (Opcional)</span>
                       </button>
                     ) : (
@@ -388,24 +388,24 @@ export const CandleTributeSection = ({
                     )}
                   </div>
                 ) : (
-                  <div className="p-3 rounded-xl bg-[#FAF7F2] dark:bg-[#14161C] border border-[#EAE4D8] dark:border-[#282E39] text-[11px] text-[#7A7167] dark:text-[#9A9388] flex items-center gap-2">
+                  <div className="p-3 rounded-xl bg-[#FAF7F2] border border-[#EAE4D8] text-[11px] text-[#7A7167] flex items-center gap-2">
                     <Flame className="w-4 h-4 text-[#C29837] shrink-0" />
                     <span>Velas solemnes y mensajes de texto activados.</span>
                   </div>
                 )}
 
-                <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#F2ECE1] dark:border-[#282E39]">
+                <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#F2ECE1]">
                   <button
                     type="button"
                     onClick={handleCloseModal}
-                    className="px-4 py-2 rounded-full text-xs font-semibold text-[#736B63] dark:text-[#A69D92] hover:bg-[#EFE8DC] dark:hover:bg-[#252B37] transition-colors cursor-pointer"
+                    className="px-4 py-2 rounded-full text-xs font-semibold text-[#736B63] hover:bg-[#EFE8DC] transition-colors cursor-pointer"
                   >
                     Cancelar
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-2 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] transition-all shadow-md disabled:opacity-50 cursor-pointer"
+                    className="px-6 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-all shadow-md disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmitting ? 'Enviando con respeto...' : 'Publicar Homenaje'}
                   </button>
@@ -420,28 +420,28 @@ export const CandleTributeSection = ({
       {selectedPhotoPreview && (
         <div
           onClick={() => setSelectedPhotoPreview(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-2xl w-full bg-[#181B22] border border-[#38404F] rounded-3xl overflow-hidden shadow-2xl"
+            className="relative max-w-2xl w-full bg-white border-2 border-[#C29837] rounded-3xl overflow-hidden shadow-2xl"
           >
-            <div className="flex items-center justify-between p-4 px-6 border-b border-[#282E39] text-white">
-              <span className="text-xs font-medium text-[#C29837]">
+            <div className="flex items-center justify-between p-4 px-6 border-b border-[#F2ECE1]">
+              <span className="text-xs font-semibold text-[#8C6B32]">
                 Recuerdo compartido por {selectedPhotoPreview.author}
               </span>
               <button
                 onClick={() => setSelectedPhotoPreview(null)}
-                className="p-1 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className="p-1.5 rounded-full text-[#8C847A] hover:text-[#2D2926] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-3 bg-black flex items-center justify-center max-h-[75vh]">
+            <div className="p-4 bg-[#FAF8F5] flex items-center justify-center max-h-[75vh]">
               <img
                 src={selectedPhotoPreview.url}
                 alt="Recuerdo ampliado"
-                className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl"
+                className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl border border-[#EAE4D8]"
               />
             </div>
           </div>

@@ -36,14 +36,14 @@ export const MemorialView = ({ initialObituary }: Props) => {
   const getThemeClasses = () => {
     switch (obituary.themePreset) {
       case 'charcoal-dark':
-        return 'bg-[#121418] text-[#EAE6DF]';
+        return 'bg-[#2A2622] text-[#F5EFE6]';
       case 'olive-peace':
-        return 'bg-[#F4F6F4] dark:bg-[#131714] text-[#2D2926] dark:text-[#EAE6DF]';
+        return 'bg-[#F4F6F4] text-[#2D2926]';
       case 'rose-memory':
-        return 'bg-[#F9F5F3] dark:bg-[#181416] text-[#2D2926] dark:text-[#EAE6DF]';
+        return 'bg-[#F9F5F3] text-[#2D2926]';
       case 'ivory-warm':
       default:
-        return 'bg-[#FBF9F5] dark:bg-[#101216] text-[#2D2926] dark:text-[#EAE6DF]';
+        return 'bg-[#FBF9F5] text-[#2D2926]';
     }
   };
 

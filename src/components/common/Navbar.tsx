@@ -82,7 +82,7 @@ export const Navbar = () => {
           ) : (
             <Link
               href="/login"
-              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#2D2926] text-white hover:bg-[#433E3A] transition-all shadow-sm cursor-pointer"
+              className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-semibold bg-[#8C6B32] text-white hover:bg-[#785924] transition-all shadow-sm cursor-pointer"
               title="Iniciar Sesión"
             >
               <LogIn className="w-3.5 h-3.5 text-[#C29837]" />

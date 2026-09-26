@@ -400,7 +400,7 @@ export default function FamilyDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBF9F5] dark:bg-[#101216] flex flex-col">
+      <div className="min-h-screen bg-[#FBF9F5] flex flex-col">
         <Navbar />
         <div className="flex-1 flex items-center justify-center">
           <Flame className="w-8 h-8 text-[#C29837] animate-flame" />
@@ -411,10 +411,10 @@ export default function FamilyDashboardPage() {
 
   if (!memorial) {
     return (
-      <div className="min-h-screen bg-[#FBF9F5] dark:bg-[#101216] flex flex-col">
+      <div className="min-h-screen bg-[#FBF9F5] flex flex-col">
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="font-memorial text-2xl text-[#2D2926] dark:text-[#EAE6DF] mb-2">
+          <h2 className="font-memorial text-2xl text-[#2D2926] mb-2">
             Memorial no encontrado
           </h2>
           <Link href="/" className="text-xs text-[#C29837] underline">
@@ -481,7 +481,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('photos')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'photos'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -493,7 +493,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('design')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'design'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -505,7 +505,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('bio')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'bio'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -517,7 +517,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('services')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'services'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -529,7 +529,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('timeline')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 ${
               activeTab === 'timeline'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -541,7 +541,7 @@ export default function FamilyDashboardPage() {
             onClick={() => setActiveTab('moderation')}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-colors shrink-0 cursor-pointer flex items-center gap-1.5 relative ${
               activeTab === 'moderation'
-                ? 'bg-[#2D2926] text-white'
+                ? 'bg-[#8C6B32] text-white shadow-xs'
                 : 'text-[#736B63] hover:bg-[#F3ECE0]'
             }`}
           >
@@ -557,12 +557,12 @@ export default function FamilyDashboardPage() {
 
         {/* PESTAÑA 1: GESTIÓN DE FOTOS */}
         {activeTab === 'photos' && (
-          <div className="bg-white dark:bg-[#171A20] border border-[#EAE4D8] dark:border-[#282E39] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="bg-white border border-[#EAE4D8] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
             <div>
-              <h2 className="font-memorial text-xl text-[#2D2926] dark:text-[#EAE6DF] mb-1">
+              <h2 className="font-memorial text-xl text-[#2D2926] mb-1">
                 Fotografías y Retrato
               </h2>
-              <p className="text-xs text-[#7A7167] dark:text-[#9A9388]">
+              <p className="text-xs text-[#7A7167]">
                 Carga archivos directamente desde tu dispositivo para actualizar el memorial.
               </p>
             </div>
@@ -587,12 +587,12 @@ export default function FamilyDashboardPage() {
               />
             </div>
 
-            <div className="pt-6 border-t border-[#F2ECE1] dark:border-[#282E39] flex justify-end">
+            <div className="pt-6 border-t border-[#F2ECE1] flex justify-end">
               <button
                 type="button"
                 onClick={() => handleSaveGeneral()}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] dark:bg-[#C29837] text-white dark:text-[#101216] text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{isSaving ? 'Guardando...' : 'Guardar Fotografías'}</span>
@@ -913,7 +913,7 @@ export default function FamilyDashboardPage() {
                 type="button"
                 onClick={() => handleSaveGeneral()}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{isSaving ? 'Guardando...' : 'Aplicar Estilo al Memorial'}</span>
@@ -1020,7 +1020,7 @@ export default function FamilyDashboardPage() {
               <button
                 type="submit"
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{isSaving ? 'Guardando...' : 'Guardar Información'}</span>
@@ -1052,7 +1052,7 @@ export default function FamilyDashboardPage() {
                       setShowAddServiceForm(true);
                       setEditingService(null);
                     }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer"
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>+ Añadir Ceremonia</span>
@@ -1468,7 +1468,7 @@ export default function FamilyDashboardPage() {
                   <button
                     type="button"
                     onClick={handleAddService}
-                    className="px-5 py-2 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm"
+                    className="px-5 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
                   >
                     Añadir Ceremonia
                   </button>
@@ -1546,7 +1546,7 @@ export default function FamilyDashboardPage() {
                 type="button"
                 onClick={() => handleSaveGeneral()}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{isSaving ? 'Guardando...' : 'Guardar Ceremonias'}</span>
@@ -1640,7 +1640,7 @@ export default function FamilyDashboardPage() {
                     <button
                       type="button"
                       onClick={handleSaveEditedMilestone}
-                      className="flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm"
+                      className="flex items-center gap-1.5 px-6 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>Guardar Cambios del Hito</span>
@@ -1704,7 +1704,7 @@ export default function FamilyDashboardPage() {
                 <button
                   type="button"
                   onClick={handleAddTimelineMilestone}
-                  className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm"
+                  className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Añadir Hito</span>
@@ -1762,7 +1762,7 @@ export default function FamilyDashboardPage() {
                 type="button"
                 onClick={() => handleSaveGeneral()}
                 disabled={isSaving}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] cursor-pointer shadow-sm disabled:opacity-50"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-colors cursor-pointer shadow-sm disabled:opacity-50"
               >
                 <Save className="w-3.5 h-3.5" />
                 <span>{isSaving ? 'Guardando...' : 'Guardar Línea de Vida'}</span>
@@ -1867,7 +1867,7 @@ export default function FamilyDashboardPage() {
                       </button>
                       <button
                         onClick={() => handleApproveTribute(tribute.id)}
-                        className="flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-medium bg-[#2D2926] text-white hover:bg-[#433E3A] cursor-pointer shadow-xs"
+                        className="flex items-center gap-1 px-4 py-1.5 rounded-full text-xs font-medium bg-[#8C6B32] hover:bg-[#785924] text-white transition-colors cursor-pointer shadow-xs"
                       >
                         <Check className="w-3.5 h-3.5" />
                         <span>Aprobar y Publicar</span>
@@ -1884,28 +1884,28 @@ export default function FamilyDashboardPage() {
         {previewTributePhoto && (
           <div
             onClick={() => setPreviewTributePhoto(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in fade-in"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in"
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              className="relative max-w-2xl w-full bg-[#181B22] border border-[#38404F] rounded-3xl overflow-hidden shadow-2xl"
+              className="relative max-w-2xl w-full bg-white border-2 border-[#C29837] rounded-3xl overflow-hidden shadow-2xl"
             >
-              <div className="flex items-center justify-between p-4 px-6 border-b border-[#282E39] text-white">
-                <span className="text-xs font-medium text-[#C29837]">
+              <div className="flex items-center justify-between p-4 px-6 border-b border-[#F2ECE1]">
+                <span className="text-xs font-semibold text-[#8C6B32]">
                   Inspección de Fotografía para Aprobación
                 </span>
                 <button
                   onClick={() => setPreviewTributePhoto(null)}
-                  className="p-1 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  className="p-1.5 rounded-full text-[#8C847A] hover:text-[#2D2926] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <div className="p-3 bg-black flex items-center justify-center max-h-[75vh]">
+              <div className="p-4 bg-[#FAF8F5] flex items-center justify-center max-h-[75vh]">
                 <img
                   src={previewTributePhoto}
                   alt="Vista previa"
-                  className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl"
+                  className="max-h-[70vh] w-auto max-w-full object-contain rounded-xl border border-[#EAE4D8]"
                 />
               </div>
             </div>

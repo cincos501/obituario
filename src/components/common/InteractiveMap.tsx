@@ -115,14 +115,14 @@ export const InteractiveMap = ({
   }, [lat, lng, locationName, address, zoom, editable]);
 
   return (
-    <div className="w-full rounded-2xl overflow-hidden border border-[#EAE4D8] dark:border-[#282E39] shadow-xs">
-      <div className="bg-[#FAF7F2] dark:bg-[#15181E] px-4 py-2 border-b border-[#EAE4D8] dark:border-[#282E39] flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-1">
-        <span className="font-semibold text-[#2D2926] dark:text-[#EAE6DF] flex items-center gap-1.5">
+    <div className="w-full rounded-2xl overflow-hidden border border-[#DFCDB8] shadow-xs">
+      <div className="bg-[#FAF7F2] px-4 py-2 border-b border-[#DFCDB8] flex flex-col sm:flex-row sm:items-center justify-between text-xs gap-1">
+        <span className="font-semibold text-[#2D2926] flex items-center gap-1.5">
           <MapPin className="w-3.5 h-3.5 text-[#C29837]" />
           <span>Ubicación de la Ceremonia (OpenStreetMap)</span>
         </span>
-        <span className="text-[10px] text-[#7A7167] dark:text-[#8C847A]">
-          {editable ? '📍 Haz clic en el mapa o arrastra el marcador para fijar la ubicación' : 'Mapa interactivo'}
+        <span className="text-[10px] text-[#7A7167]">
+          {editable ? 'Haz clic en el mapa para fijar la ubicación exacta' : 'Mapa interactivo'}
         </span>
       </div>
       <div ref={mapContainerRef} className="h-56 w-full z-10" />
