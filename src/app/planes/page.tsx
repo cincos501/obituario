@@ -69,10 +69,10 @@ export default function PlansPage() {
           </p>
 
           {/* Selector de Modalidad: Pago Único vs Anual */}
-          <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#EAE2D5] border border-[#D8CABE] shadow-xs">
+          <div className="flex flex-col sm:inline-flex sm:flex-row items-stretch sm:items-center gap-1.5 p-1.5 rounded-2xl bg-[#EAE2D5] border border-[#D8CABE] shadow-xs max-w-sm sm:max-w-none mx-auto">
             <button
               onClick={() => setBillingCycle('one-time')}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-4 py-2 sm:py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${
                 billingCycle === 'one-time'
                   ? 'bg-white text-[#2D2926] shadow-xs'
                   : 'text-[#6B635A] hover:text-[#2D2926]'
@@ -82,7 +82,7 @@ export default function PlansPage() {
             </button>
             <button
               onClick={() => setBillingCycle('annual')}
-              className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`px-4 py-2 sm:py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${
                 billingCycle === 'annual'
                   ? 'bg-white text-[#2D2926] shadow-xs'
                   : 'text-[#6B635A] hover:text-[#2D2926]'
@@ -94,7 +94,7 @@ export default function PlansPage() {
         </div>
 
         {/* Tarjetas de Planes */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12 sm:mb-16">
           {SUBSCRIPTION_PLANS.map((plan) => {
             const priceDisplay = billingCycle === 'one-time'
               ? plan.priceLocal

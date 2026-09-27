@@ -416,18 +416,18 @@ export const ImageUploader = ({
           className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="bg-white border-2 border-[#C29837] rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
+          <div className="bg-white border-2 border-[#C29837] rounded-2xl sm:rounded-3xl max-w-xl w-full p-4 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
             {/* Cabecera del Modal */}
             <div className="flex items-center justify-between pb-3 border-b border-[#F2ECE1]">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] flex items-center justify-center text-[#C29837]">
+                <div className="w-8 h-8 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] flex items-center justify-center text-[#C29837] shrink-0">
                   <Crop className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-[#2D2926]">
+                  <h3 className="text-xs sm:text-sm font-semibold text-[#2D2926]">
                     Ajustar y Encuadrar Fotografía
                   </h3>
-                  <p className="text-[11px] text-[#7A7167]">
+                  <p className="text-[10px] sm:text-[11px] text-[#7A7167]">
                     Arrastra la foto para posicionarla o ajusta el zoom libremente.
                   </p>
                 </div>
@@ -442,19 +442,19 @@ export const ImageUploader = ({
             </div>
 
             {/* Espacio de Encuadre Interactivo */}
-            <div className="relative w-full flex flex-col items-center justify-center py-2 select-none">
+            <div className="relative w-full flex flex-col items-center justify-center py-2 select-none overflow-hidden">
               <div
                 ref={cropperBoxRef}
                 onMouseDown={handleMouseDown}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
-                className={`relative overflow-hidden bg-[#F5EFE6] border-2 border-[#C29837] cursor-grab active:cursor-grabbing shadow-inner ${
+                className={`relative overflow-hidden bg-[#F5EFE6] border-2 border-[#C29837] cursor-grab active:cursor-grabbing shadow-inner max-w-full ${
                   effectiveShape === 'round'
-                    ? 'w-64 h-64 sm:w-72 sm:h-72 rounded-full ring-8 ring-[#EAE4D8]'
+                    ? 'w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-full ring-4 sm:ring-8 ring-[#EAE4D8]'
                     : effectiveShape === 'wide'
-                    ? 'w-full h-52 sm:h-64 rounded-2xl'
-                    : 'w-64 h-64 sm:w-72 sm:h-72 rounded-2xl'
+                    ? 'w-full h-40 sm:h-52 md:h-64 rounded-2xl'
+                    : 'w-48 h-48 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-2xl'
                 }`}
               >
                 {/* Imagen manipulable */}

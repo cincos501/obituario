@@ -172,25 +172,25 @@ export const BanecoCheckoutModal = ({
       <div className="bg-[#FAF7F2] border border-[#DFCDB8] rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col max-h-[92vh]">
         
         {/* Cabecera del Checkout */}
-        <div className="bg-[#2D2926] text-white p-5 sm:p-6 relative">
+        <div className="bg-[#2D2926] text-white p-4 sm:p-6 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-[#A69D92] hover:text-white transition-colors p-1.5 rounded-full hover:bg-white/10"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 text-[#A69D92] hover:text-white transition-colors p-1.5 rounded-full hover:bg-white/10 cursor-pointer"
             aria-label="Cerrar ventana de pago"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-7 h-7 rounded-lg bg-[#C29837] flex items-center justify-center text-white font-bold text-xs shadow-xs">
+          <div className="flex items-center gap-2 mb-2 pr-8">
+            <div className="w-7 h-7 rounded-lg bg-[#C29837] flex items-center justify-center text-white font-bold text-xs shadow-xs shrink-0">
               <Building2 className="w-4 h-4" />
             </div>
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#E8D7B0]">
-              Cobro Digital Banco Económico (Baneco)
+            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wider text-[#E8D7B0] truncate">
+              Cobro Digital Banco Económico
             </span>
           </div>
 
-          <div className="flex items-baseline justify-between gap-4 mt-1">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 sm:gap-4 mt-1">
             <div>
               <h2 className="font-memorial text-xl sm:text-2xl font-normal text-white">
                 {plan.name}
@@ -199,7 +199,7 @@ export const BanecoCheckoutModal = ({
                 Preservación Digital de Recuerdos Eternos
               </p>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <span className="font-memorial text-2xl sm:text-3xl text-[#F5C354] font-normal">
                 {amountBob.toFixed(2)} Bs
               </span>
@@ -301,19 +301,19 @@ export const BanecoCheckoutModal = ({
               {/* PESTAÑA 1: QR SIMPLE BANECO */}
               {activeTab === 'qr' && (
                 <div className="space-y-4 text-center">
-                  <div className="bg-white border border-[#EAE4D8] rounded-3xl p-5 shadow-xs max-w-xs mx-auto">
+                  <div className="bg-white border border-[#EAE4D8] rounded-2xl sm:rounded-3xl p-3.5 sm:p-5 shadow-xs max-w-xs w-full mx-auto">
                     {isLoadingQr ? (
-                      <div className="h-64 flex flex-col items-center justify-center gap-2 text-xs text-[#7A7167]">
+                      <div className="h-52 sm:h-64 flex flex-col items-center justify-center gap-2 text-xs text-[#7A7167]">
                         <Loader2 className="w-8 h-8 animate-spin text-[#C29837]" />
                         <span>Generando código QR Banco Económico...</span>
                       </div>
                     ) : transaction?.qrImageUrl ? (
                       <div className="space-y-3">
-                        <div className="relative p-2 bg-[#FFFDF9] border border-[#E8D7B0] rounded-2xl inline-block shadow-inner">
+                        <div className="relative p-2 bg-[#FFFDF9] border border-[#E8D7B0] rounded-2xl inline-block shadow-inner max-w-full">
                           <img
                             src={transaction.qrImageUrl}
                             alt="Código QR Simple Banco Económico"
-                            className="w-60 h-60 mx-auto rounded-lg object-contain"
+                            className="w-48 h-48 sm:w-60 sm:h-60 max-w-full mx-auto rounded-lg object-contain"
                           />
                         </div>
 
@@ -342,7 +342,7 @@ export const BanecoCheckoutModal = ({
                     </div>
 
                     <p className="font-semibold text-[#2D2926] flex items-center gap-1.5 text-[11px]">
-                      <Sparkles className="w-3.5 h-3.5 text-[#C29837]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#C29837] shrink-0" />
                       <span>Instrucciones de pago desde cualquier banco en Bolivia:</span>
                     </p>
                     <ol className="list-decimal list-inside text-[#6E665D] space-y-1 text-[11px] leading-relaxed">
@@ -352,11 +352,11 @@ export const BanecoCheckoutModal = ({
                       <li>Confirma la transferencia de <strong>{amountBob.toFixed(2)} Bs</strong>. El pago se vinculará directamente a la cuenta <strong>{accountNumber}</strong>.</li>
                     </ol>
 
-                    <div className="pt-2 flex flex-wrap gap-2 border-t border-[#F2ECE1]">
+                    <div className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 border-t border-[#F2ECE1]">
                       <button
                         type="button"
                         onClick={handleCopyAmount}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer w-full"
                       >
                         {copiedAmount ? <Check className="w-3.5 h-3.5 text-[#4A634E]" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedAmount ? 'Monto Copiado' : `Copiar ${amountBob.toFixed(2)} Bs`}</span>
@@ -365,7 +365,7 @@ export const BanecoCheckoutModal = ({
                       <button
                         type="button"
                         onClick={handleCopyAccount}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer w-full"
                       >
                         {copiedAccount ? <Check className="w-3.5 h-3.5 text-[#4A634E]" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedAccount ? 'Cuenta Copiada' : 'Copiar Cuenta'}</span>
@@ -374,7 +374,7 @@ export const BanecoCheckoutModal = ({
                       <button
                         type="button"
                         onClick={handleDownloadQr}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+                        className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer w-full"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Descargar QR</span>

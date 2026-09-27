@@ -93,7 +93,10 @@ function CreateMemorialForm() {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '');
       const year = new Date(deathDate).getFullYear() || new Date().getFullYear();
-      const slug = `${baseSlug}-${year}-${Math.floor(Math.random() * 1000)}`;
+      const slug = `${baseSlug}-${year}-${Math.floor(100 + Math.random() * 900)}`;
+
+      // Generar PIN de 4 dígitos unificado tanto para Supabase (access_pin) como para credenciales familiares
+      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString();
 
       const photoToUse =
         mainPhotoUrl ||
@@ -131,23 +134,25 @@ function CreateMemorialForm() {
         planId: selectedPlanId,
         moderationRequired,
         ownerName: ownerName || 'Familiar Responsable',
-        ownerEmail: ownerEmail || `familia.${Date.now()}@hobituario.com`,
+        ownerEmail: ownerEmail || `familia.${slug}@hobituario.com`,
+        accessPin: generatedPin,
         services: initialServices,
       });
 
-      // Crear credenciales inmediatas para la familia
-      const { user, generatedPassword } = authService.registerFamilyUser({
+      // Crear credenciales inmediatas para la familia con el mismo PIN
+      const { user } = authService.registerFamilyUser({
         email: ownerEmail || `familia.${created.slug}@hobituario.com`,
         name: ownerName || 'Familiar Responsable',
         memorialSlug: created.slug,
+        password: generatedPin,
       });
 
       // Auto-iniciar sesión como el familiar titular
-      await authService.login(user.email, generatedPassword);
+      await authService.login(user.email, generatedPin);
 
       setCreatedCredentials({
         email: user.email,
-        pass: generatedPassword,
+        pass: generatedPin,
         slug: created.slug,
         name: created.fullName,
       });
@@ -160,41 +165,41 @@ function CreateMemorialForm() {
   };
 
   return (
-    <main className="flex-1 max-w-3xl mx-auto w-full px-4 sm:px-6 py-10">
-      <div className="text-center mb-8">
+    <main className="flex-1 max-w-3xl mx-auto w-full px-3 sm:px-6 py-6 sm:py-10">
+      <div className="text-center mb-6 sm:mb-8">
         <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center bg-[#F3ECE0] border border-[#E2D5C3]">
           <Flame className="w-6 h-6 text-[#C29837] animate-flame" />
         </div>
-        <h1 className="font-memorial text-3xl sm:text-4xl text-[#2D2926]">
+        <h1 className="font-memorial text-2xl sm:text-4xl text-[#2D2926]">
           Crear un Memorial Eterno
         </h1>
-        <p className="text-xs sm:text-sm text-[#7A7167] max-w-md mx-auto mt-2">
+        <p className="text-xs sm:text-sm text-[#7A7167] max-w-md mx-auto mt-2 px-2">
           Un espacio digno y solemne para preservar su historia, recibir condolencias y coordinar las ceremonias de despedida.
         </p>
 
         {banecoTransactionNumber && (
-          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0EB] border border-[#D0E0D0] text-[#4A634E] text-xs font-semibold">
-            <CheckCircle className="w-3.5 h-3.5" />
-            <span>Pago Confirmado con Banco Económico: {banecoTransactionNumber}</span>
+          <div className="mt-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF0EB] border border-[#D0E0D0] text-[#4A634E] text-xs font-semibold max-w-full truncate">
+            <CheckCircle className="w-3.5 h-3.5 shrink-0" />
+            <span className="truncate">Pago Confirmado Baneco: {banecoTransactionNumber}</span>
           </div>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8 bg-white border border-[#EAE4D8] rounded-3xl p-6 sm:p-10 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8 bg-white border border-[#EAE4D8] rounded-2xl sm:rounded-3xl p-4 sm:p-8 md:p-10 shadow-sm">
         {/* Bloque 0: Selección de Membresía SaaS y Pasarela Baneco */}
         <div>
-          <div className="flex items-center justify-between pb-2 border-b border-[#F2ECE1] mb-4">
-            <h2 className="font-memorial text-xl text-[#2D2926] flex items-center gap-2">
-              <Tag className="w-4 h-4 text-[#C29837]" />
-              <span>Selecciona la Membresía del Memorial</span>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#F2ECE1] mb-4">
+            <h2 className="font-memorial text-lg sm:text-xl text-[#2D2926] flex items-center gap-2">
+              <Tag className="w-4 h-4 text-[#C29837] shrink-0" />
+              <span>Selecciona la Membresía</span>
             </h2>
 
             <button
               type="button"
               onClick={() => setIsCheckoutOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] text-[#8C6B32] text-xs font-semibold hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] text-[#8C6B32] text-xs font-semibold hover:bg-[#F2ECE1] transition-colors cursor-pointer w-full sm:w-auto"
             >
-              <Building2 className="w-3.5 h-3.5" />
+              <Building2 className="w-3.5 h-3.5 shrink-0" />
               <span>Pagar con Baneco (QR Simple)</span>
             </button>
           </div>
@@ -488,12 +493,12 @@ function CreateMemorialForm() {
           </div>
         </div>
 
-        {/* Botón de Publicación */}
-        <div className="pt-6 border-t border-[#F2ECE1] flex items-center justify-between">
+        {/* Botón de Publicación Responsivo */}
+        <div className="pt-6 border-t border-[#F2ECE1] flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => router.back()}
-            className="text-xs text-[#7A7167] hover:text-[#2D2926]"
+            className="text-xs text-[#7A7167] hover:text-[#2D2926] py-2 px-4 cursor-pointer"
           >
             ← Volver
           </button>
@@ -501,19 +506,19 @@ function CreateMemorialForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-7 py-3 rounded-full bg-[#2D2926] text-[#FBF9F5] hover:bg-[#433E3A] text-xs sm:text-sm font-medium transition-all shadow-md disabled:opacity-50 cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-[#2D2926] text-[#FBF9F5] hover:bg-[#433E3A] text-xs sm:text-sm font-medium transition-all shadow-md disabled:opacity-50 cursor-pointer"
           >
-            <CheckCircle className="w-4 h-4 text-[#E6B84A]" />
+            <CheckCircle className="w-4 h-4 text-[#E6B84A] shrink-0" />
             <span>{isSubmitting ? 'Creando Memorial...' : 'Publicar Memorial'}</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 shrink-0" />
           </button>
         </div>
       </form>
 
       {/* Modal de Credenciales Inmediatas */}
       {createdCredentials && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[#FAF7F2] border border-[#DFCDB8] rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-5 text-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-[#FAF7F2] border border-[#DFCDB8] rounded-2xl sm:rounded-3xl max-w-lg w-full p-4 sm:p-8 shadow-2xl space-y-4 sm:space-y-5 text-center max-h-[92vh] overflow-y-auto">
             <div className="w-14 h-14 rounded-full bg-[#EBF0EB] text-[#4A634E] flex items-center justify-center mx-auto shadow-sm">
               <CheckCircle className="w-8 h-8" />
             </div>

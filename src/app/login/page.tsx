@@ -78,21 +78,21 @@ function LoginForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto w-full px-4 py-12">
-      <div className="text-center mb-8">
+    <div className="max-w-md mx-auto w-full px-3 sm:px-4 py-8 sm:py-12">
+      <div className="text-center mb-6 sm:mb-8">
         <div className="w-14 h-14 rounded-full bg-[#F3ECE0] border border-[#E2D5C3] flex items-center justify-center text-[#C29837] shadow-sm mx-auto mb-4">
           <Flame className="w-7 h-7 animate-flame" />
         </div>
         <h1 className="font-memorial text-2xl sm:text-3xl text-[#2D2926] font-semibold mb-2">
           Iniciar Sesión
         </h1>
-        <p className="text-xs text-[#7A7167]">
+        <p className="text-xs text-[#7A7167] px-2">
           Accede a tu panel de administración según tus permisos y facultades asignadas.
         </p>
       </div>
 
       {currentUser ? (
-        <div className="bg-white border border-[#EAE4D8] rounded-3xl p-6 shadow-sm text-center space-y-4">
+        <div className="bg-white border border-[#EAE4D8] rounded-2xl sm:rounded-3xl p-5 sm:p-6 shadow-sm text-center space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF3E3] text-[#C29837] text-xs font-semibold">
             {currentUser.role === 'super_admin' ? (
               <>
@@ -112,21 +112,21 @@ function LoginForm() {
           <div className="pt-2 flex flex-col gap-2">
             <button
               onClick={() => handleRedirect(currentUser)}
-              className="w-full py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Ir a mi Panel de Control</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={handleLogout}
-              className="w-full py-2 rounded-full border border-[#D8CABE] text-[#7A7167] text-xs font-semibold hover:bg-[#FAF7F2] transition-colors"
+              className="w-full py-2 rounded-full border border-[#D8CABE] text-[#7A7167] text-xs font-semibold hover:bg-[#FAF7F2] transition-colors cursor-pointer"
             >
               Cerrar Sesión
             </button>
           </div>
         </div>
       ) : (
-        <div className="bg-white border border-[#EAE4D8] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="bg-white border border-[#EAE4D8] rounded-2xl sm:rounded-3xl p-4 sm:p-8 shadow-sm space-y-5 sm:space-y-6">
           {error && (
             <div className="p-3.5 rounded-2xl bg-[#FBEBE8] border border-[#ECD1CC] text-[#9E4232] text-xs flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />

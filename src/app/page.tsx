@@ -271,10 +271,10 @@ export default function HomePage() {
               Sin cuotas sorpresa. Elige la modalidad que prefieras y activa por WhatsApp.
             </p>
 
-            <div className="inline-flex items-center p-1.5 rounded-2xl bg-[#EAE2D5] border border-[#D8CABE] mt-6">
+            <div className="flex flex-col sm:inline-flex sm:flex-row items-stretch sm:items-center gap-1.5 p-1.5 rounded-2xl bg-[#EAE2D5] border border-[#D8CABE] mt-6 max-w-sm sm:max-w-none mx-auto">
               <button
                 onClick={() => setBillingCycle('one-time')}
-                className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${billingCycle === 'one-time'
+                className={`px-4 py-2 sm:py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${billingCycle === 'one-time'
                     ? 'bg-white text-[#2D2926] shadow-xs'
                     : 'text-[#6B635A]'
                   }`}
@@ -283,7 +283,7 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => setBillingCycle('annual')}
-                className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${billingCycle === 'annual'
+                className={`px-4 py-2 sm:py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer text-center ${billingCycle === 'annual'
                     ? 'bg-white text-[#2D2926] shadow-xs'
                     : 'text-[#6B635A]'
                   }`}

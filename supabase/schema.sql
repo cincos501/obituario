@@ -162,58 +162,72 @@ ALTER TABLE public.memory_media ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- 1. Políticas de Memoriales Públicos
-CREATE POLICY "Memoriales públicos son visibles para cualquier visitante"
+CREATE POLICY "Permitir lectura de memoriales"
   ON public.obituaries FOR SELECT
-  USING (is_public = TRUE OR auth.role() = 'authenticated');
+  USING (TRUE);
 
-CREATE POLICY "Super admin y dueños pueden modificar su memorial"
-  ON public.obituaries FOR ALL
-  USING (auth.uid() = owner_id OR EXISTS (
-    SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super_admin'
-  ));
+CREATE POLICY "Permitir crear memoriales"
+  ON public.obituaries FOR INSERT
+  WITH CHECK (TRUE);
+
+CREATE POLICY "Permitir actualizar memoriales"
+  ON public.obituaries FOR UPDATE
+  USING (TRUE);
+
+CREATE POLICY "Permitir eliminar memoriales"
+  ON public.obituaries FOR DELETE
+  USING (TRUE);
 
 -- 2. Políticas de Servicios Funerarios
-CREATE POLICY "Servicios funerarios son públicos"
+CREATE POLICY "Permitir lectura de servicios"
   ON public.funeral_services FOR SELECT
   USING (TRUE);
 
-CREATE POLICY "Familia y admin pueden editar servicios"
-  ON public.funeral_services FOR ALL
-  USING (EXISTS (
-    SELECT 1 FROM public.obituaries 
-    WHERE id = funeral_services.obituary_id 
-    AND (owner_id = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super_admin'))
-  ));
+CREATE POLICY "Permitir crear servicios"
+  ON public.funeral_services FOR INSERT
+  WITH CHECK (TRUE);
+
+CREATE POLICY "Permitir actualizar servicios"
+  ON public.funeral_services FOR UPDATE
+  USING (TRUE);
+
+CREATE POLICY "Permitir eliminar servicios"
+  ON public.funeral_services FOR DELETE
+  USING (TRUE);
 
 -- 3. Políticas de Hitos de Vida
-CREATE POLICY "Hitos de vida son públicos"
+CREATE POLICY "Permitir lectura de hitos"
   ON public.timeline_events FOR SELECT
   USING (TRUE);
 
-CREATE POLICY "Familia y admin pueden editar hitos"
-  ON public.timeline_events FOR ALL
-  USING (EXISTS (
-    SELECT 1 FROM public.obituaries 
-    WHERE id = timeline_events.obituary_id 
-    AND (owner_id = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super_admin'))
-  ));
+CREATE POLICY "Permitir crear hitos"
+  ON public.timeline_events FOR INSERT
+  WITH CHECK (TRUE);
+
+CREATE POLICY "Permitir actualizar hitos"
+  ON public.timeline_events FOR UPDATE
+  USING (TRUE);
+
+CREATE POLICY "Permitir eliminar hitos"
+  ON public.timeline_events FOR DELETE
+  USING (TRUE);
 
 -- 4. Políticas de Tributos y Condolencias
-CREATE POLICY "Cualquier persona puede leer homenajes aprobados"
+CREATE POLICY "Permitir lectura de condolencias"
   ON public.condolences_and_tributes FOR SELECT
-  USING (is_approved = TRUE OR moderation_status = 'approved');
+  USING (TRUE);
 
-CREATE POLICY "Cualquier persona puede ofrendar una vela o flor"
+CREATE POLICY "Permitir crear condolencias"
   ON public.condolences_and_tributes FOR INSERT
   WITH CHECK (TRUE);
 
-CREATE POLICY "Familia y admin pueden moderar condolencias"
-  ON public.condolences_and_tributes FOR ALL
-  USING (EXISTS (
-    SELECT 1 FROM public.obituaries 
-    WHERE id = condolences_and_tributes.obituary_id 
-    AND (owner_id = auth.uid() OR EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'super_admin'))
-  ));
+CREATE POLICY "Permitir moderar condolencias"
+  ON public.condolences_and_tributes FOR UPDATE
+  USING (TRUE);
+
+CREATE POLICY "Permitir eliminar condolencias"
+  ON public.condolences_and_tributes FOR DELETE
+  USING (TRUE);
 
 -- ==============================================================================
 -- 8. TABLA DE TRANSACCIONES Y PAGOS BANCO ECONÓMICO (BANECO)
