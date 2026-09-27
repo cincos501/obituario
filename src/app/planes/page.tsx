@@ -56,8 +56,7 @@ export default function PlansPage() {
         {/* Encabezado */}
         <div className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] text-[#8C6B32] text-xs font-semibold mb-4">
-            <Building2 className="w-3.5 h-3.5" />
-            <span>Pasarela Oficial Banco Económico (Baneco) • QR Simple & Tarjetas</span>
+            <span>Cobros Digitales Banco Económico (Baneco) • QR Simple ASFI</span>
           </div>
 
           <h1 className="font-memorial text-3xl sm:text-5xl text-[#2D2926] font-normal tracking-tight mb-4">
@@ -162,7 +161,7 @@ export default function PlansPage() {
                     }`}
                   >
                     <QrCode className="w-4 h-4 text-[#F5C354]" />
-                    <span>Pagar con Baneco (QR / Tarjeta)</span>
+                    <span>Pagar con Baneco (QR Simple)</span>
                   </button>
 
                   <a

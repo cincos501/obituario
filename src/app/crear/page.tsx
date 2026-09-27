@@ -195,7 +195,7 @@ function CreateMemorialForm() {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] text-[#8C6B32] text-xs font-semibold hover:bg-[#F2ECE1] transition-colors cursor-pointer"
             >
               <Building2 className="w-3.5 h-3.5" />
-              <span>Pagar con Baneco (QR/Tarjeta)</span>
+              <span>Pagar con Baneco (QR Simple)</span>
             </button>
           </div>
 

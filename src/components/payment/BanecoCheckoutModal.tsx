@@ -5,11 +5,11 @@ import { SubscriptionPlan } from '../../types/memorial';
 import { 
   banecoPaymentService, 
   BanecoTransaction, 
-  PLAN_PRICES_BOB 
+  PLAN_PRICES_BOB,
+  BANECO_CONFIG
 } from '../../services/banecoPaymentService';
 import { 
   QrCode, 
-  CreditCard, 
   Clock, 
   CheckCircle2, 
   Download, 
@@ -21,8 +21,7 @@ import {
   AlertCircle, 
   Loader2, 
   MessageCircle,
-  Building2,
-  Lock
+  Building2
 } from 'lucide-react';
 
 interface Props {
@@ -46,31 +45,22 @@ export const BanecoCheckoutModal = ({
   initialPayerPhone = '',
   obituaryId,
 }: Props) => {
-  const [activeTab, setActiveTab] = useState<'qr' | 'card' | 'whatsapp'>('qr');
+  const [activeTab, setActiveTab] = useState<'qr' | 'whatsapp'>('qr');
   const [transaction, setTransaction] = useState<BanecoTransaction | null>(null);
   const [isLoadingQr, setIsLoadingQr] = useState(false);
-  const [isProcessingCard, setIsProcessingCard] = useState(false);
   const [isSimulating, setIsSimulating] = useState(false);
   const [copiedAmount, setCopiedAmount] = useState(false);
-  const [copiedTx, setCopiedTx] = useState(false);
+  const [copiedAccount, setCopiedAccount] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  // Formulario de Tarjeta
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
-  const [cardHolder, setCardHolder] = useState(initialPayerName);
-  const [documentNumber, setDocumentNumber] = useState('');
-  const [payerEmail, setPayerEmail] = useState(initialPayerEmail);
-  const [payerPhone, setPayerPhone] = useState(initialPayerPhone);
 
   // Countdown timer para el QR (15 minutos = 900s)
   const [timeLeft, setTimeLeft] = useState<number>(900);
 
   const amountBob = PLAN_PRICES_BOB[plan.id] || 341.00;
+  const accountNumber = BANECO_CONFIG.account; // 6111329426
 
-  // 1. Inicializar Orden QR con Baneco al abrir el modal
+  // 1. Inicializar Orden QR con Banco Económico al abrir el modal
   const initQrOrder = useCallback(async () => {
     setIsLoadingQr(true);
     setErrorMessage(null);
@@ -78,9 +68,9 @@ export const BanecoCheckoutModal = ({
       const tx = await banecoPaymentService.createQrOrder({
         planId: plan.id,
         planName: plan.name,
-        payerName: cardHolder || 'Familiar Titular',
-        payerEmail: payerEmail || undefined,
-        payerPhone: payerPhone || undefined,
+        payerName: initialPayerName || 'Familiar Titular',
+        payerEmail: initialPayerEmail || undefined,
+        payerPhone: initialPayerPhone || undefined,
         obituaryId,
       });
       setTransaction(tx);
@@ -91,7 +81,7 @@ export const BanecoCheckoutModal = ({
     } finally {
       setIsLoadingQr(false);
     }
-  }, [plan.id, plan.name, cardHolder, payerEmail, payerPhone, obituaryId]);
+  }, [plan.id, plan.name, initialPayerName, initialPayerEmail, initialPayerPhone, obituaryId]);
 
   useEffect(() => {
     if (isOpen) {
@@ -130,46 +120,7 @@ export const BanecoCheckoutModal = ({
     return () => clearInterval(checkInterval);
   }, [isOpen, transaction, isSuccess, activeTab, onPaymentSuccess]);
 
-  // 4. Procesar Pago con Tarjeta
-  const handleCardSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!cardNumber || !cardExpiry || !cardCvv || !cardHolder || !documentNumber) {
-      setErrorMessage('Por favor completa todos los datos de la tarjeta y tu cédula/NIT.');
-      return;
-    }
-
-    setIsProcessingCard(true);
-    setErrorMessage(null);
-
-    try {
-      const result = await banecoPaymentService.processCardPayment({
-        planId: plan.id,
-        cardNumber,
-        cardExpiry,
-        cardCvv,
-        cardHolder,
-        documentNumber,
-        payerEmail: payerEmail || undefined,
-        payerPhone: payerPhone || undefined,
-        obituaryId,
-      });
-
-      if (result.success && result.transaction) {
-        setTransaction(result.transaction);
-        setIsSuccess(true);
-        if (onPaymentSuccess) onPaymentSuccess(result.transaction);
-      } else {
-        setErrorMessage(result.message || 'Transacción denegada por el banco emisor.');
-      }
-    } catch (err: any) {
-      console.error(err);
-      setErrorMessage(err?.message || 'Error procesando el pago con tarjeta.');
-    } finally {
-      setIsProcessingCard(false);
-    }
-  };
-
-  // 5. Simular Pago Exitoso en Modo Sandbox
+  // 4. Simular Pago Exitoso en Modo Sandbox
   const handleSimulatePayment = async () => {
     if (!transaction) return;
     setIsSimulating(true);
@@ -194,22 +145,18 @@ export const BanecoCheckoutModal = ({
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Copiar al portapapeles
   const handleCopyAmount = () => {
     navigator.clipboard.writeText(amountBob.toFixed(2));
     setCopiedAmount(true);
     setTimeout(() => setCopiedAmount(false), 2000);
   };
 
-  const handleCopyTx = () => {
-    if (transaction) {
-      navigator.clipboard.writeText(transaction.transactionNumber);
-      setCopiedTx(true);
-      setTimeout(() => setCopiedTx(false), 2000);
-    }
+  const handleCopyAccount = () => {
+    navigator.clipboard.writeText(accountNumber);
+    setCopiedAccount(true);
+    setTimeout(() => setCopiedAccount(false), 2000);
   };
 
-  // Descargar imagen QR
   const handleDownloadQr = () => {
     if (!transaction?.qrImageUrl) return;
     const a = document.createElement('a');
@@ -239,7 +186,7 @@ export const BanecoCheckoutModal = ({
               <Building2 className="w-4 h-4" />
             </div>
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#E8D7B0]">
-              Pasarela Banco Económico (Baneco)
+              Cobro Digital Banco Económico (Baneco)
             </span>
           </div>
 
@@ -263,12 +210,12 @@ export const BanecoCheckoutModal = ({
           </div>
         </div>
 
-        {/* Pestañas de Selección de Medio de Pago */}
+        {/* Pestañas: Solo QR Simple y Asistencia WhatsApp */}
         {!isSuccess && (
           <div className="flex border-b border-[#EAE4D8] bg-[#F2ECE1]/60 px-4 pt-2 gap-2">
             <button
               onClick={() => setActiveTab('qr')}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-t-xl text-xs font-semibold transition-all border-b-2 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-t-xl text-xs font-semibold transition-all border-b-2 cursor-pointer ${
                 activeTab === 'qr'
                   ? 'bg-white text-[#2D2926] border-[#C29837] shadow-xs'
                   : 'text-[#6B635A] hover:text-[#2D2926] border-transparent'
@@ -282,27 +229,15 @@ export const BanecoCheckoutModal = ({
             </button>
 
             <button
-              onClick={() => setActiveTab('card')}
-              className={`flex items-center gap-1.5 px-4 py-2.5 rounded-t-xl text-xs font-semibold transition-all border-b-2 cursor-pointer ${
-                activeTab === 'card'
-                  ? 'bg-white text-[#2D2926] border-[#C29837] shadow-xs'
-                  : 'text-[#6B635A] hover:text-[#2D2926] border-transparent'
-              }`}
-            >
-              <CreditCard className="w-3.5 h-3.5 text-[#C29837]" />
-              <span>Tarjeta Débito/Crédito</span>
-            </button>
-
-            <button
               onClick={() => setActiveTab('whatsapp')}
-              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-t-xl text-xs font-semibold transition-all border-b-2 cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-t-xl text-xs font-semibold transition-all border-b-2 cursor-pointer ${
                 activeTab === 'whatsapp'
                   ? 'bg-white text-[#2D2926] border-[#25D366] shadow-xs'
                   : 'text-[#6B635A] hover:text-[#2D2926] border-transparent'
               }`}
             >
               <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
-              <span>Asistencia</span>
+              <span>Atención por WhatsApp</span>
             </button>
           </div>
         )}
@@ -337,22 +272,20 @@ export const BanecoCheckoutModal = ({
 
               <div className="bg-white rounded-2xl border border-[#D8CABE] p-4 text-left text-xs space-y-2 max-w-sm mx-auto shadow-xs">
                 <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
-                  <span className="text-[#7A7167]">Número de Transacción:</span>
+                  <span className="text-[#7A7167]">Cuenta Destino:</span>
+                  <span className="font-mono font-semibold text-[#2D2926]">{accountNumber} (Banco Económico)</span>
+                </div>
+                <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
+                  <span className="text-[#7A7167]">Transacción:</span>
                   <span className="font-mono font-semibold text-[#2D2926]">{transaction.transactionNumber}</span>
                 </div>
                 <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
                   <span className="text-[#7A7167]">Código de Autorización:</span>
-                  <span className="font-mono font-semibold text-[#C29837]">{transaction.bankAuthorizationCode || 'AUTH-BANECO-OK'}</span>
-                </div>
-                <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
-                  <span className="text-[#7A7167]">Monto Pagado:</span>
-                  <span className="font-semibold text-[#2D2926]">{transaction.amountBob.toFixed(2)} Bs (~${transaction.amountUsd} USD)</span>
+                  <span className="font-mono font-semibold text-[#C29837]">{transaction.bankAuthorizationCode || 'BNE-OK'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#7A7167]">Método:</span>
-                  <span className="font-semibold text-[#2D2926]">
-                    {transaction.paymentMethod === 'qr_simple' ? 'QR Simple Interoperable' : 'Tarjeta Baneco / Red Enlace'}
-                  </span>
+                  <span className="text-[#7A7167]">Monto Acreditado:</span>
+                  <span className="font-semibold text-[#2D2926]">{transaction.amountBob.toFixed(2)} Bs</span>
                 </div>
               </div>
 
@@ -372,15 +305,15 @@ export const BanecoCheckoutModal = ({
                     {isLoadingQr ? (
                       <div className="h-64 flex flex-col items-center justify-center gap-2 text-xs text-[#7A7167]">
                         <Loader2 className="w-8 h-8 animate-spin text-[#C29837]" />
-                        <span>Generando código ASFI Baneco...</span>
+                        <span>Generando código QR Banco Económico...</span>
                       </div>
                     ) : transaction?.qrImageUrl ? (
                       <div className="space-y-3">
                         <div className="relative p-2 bg-[#FFFDF9] border border-[#E8D7B0] rounded-2xl inline-block shadow-inner">
                           <img
                             src={transaction.qrImageUrl}
-                            alt="Código QR Simple Baneco"
-                            className="w-56 h-56 mx-auto rounded-lg object-contain"
+                            alt="Código QR Simple Banco Económico"
+                            className="w-60 h-60 mx-auto rounded-lg object-contain"
                           />
                         </div>
 
@@ -395,24 +328,35 @@ export const BanecoCheckoutModal = ({
                     )}
                   </div>
 
-                  {/* Instrucciones de Pago */}
-                  <div className="bg-white rounded-2xl p-4 border border-[#EAE4D8] text-left text-xs space-y-2">
-                    <p className="font-semibold text-[#2D2926] flex items-center gap-1.5">
+                  {/* Datos de la cuenta Banco Económico */}
+                  <div className="bg-white rounded-2xl p-4 border border-[#EAE4D8] text-left text-xs space-y-2.5">
+                    <div className="flex items-center justify-between pb-2 border-b border-[#F2ECE1]">
+                      <div>
+                        <span className="text-[10px] text-[#8C847A] uppercase font-semibold block">Entidad Bancaria</span>
+                        <span className="font-semibold text-[#2D2926]">Banco Económico S.A.</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-[#8C847A] uppercase font-semibold block">Cuenta Destino</span>
+                        <span className="font-mono font-bold text-[#C29837]">{accountNumber}</span>
+                      </div>
+                    </div>
+
+                    <p className="font-semibold text-[#2D2926] flex items-center gap-1.5 text-[11px]">
                       <Sparkles className="w-3.5 h-3.5 text-[#C29837]" />
-                      <span>¿Cómo pagar desde cualquier banco en Bolivia?</span>
+                      <span>Instrucciones de pago desde cualquier banco en Bolivia:</span>
                     </p>
                     <ol className="list-decimal list-inside text-[#6E665D] space-y-1 text-[11px] leading-relaxed">
-                      <li>Abre la app de tu banco móvil favorito (<strong>Baneco, BNB, BCP, Bisa, Mercantil, Unión, Ganadero, etc.</strong>).</li>
-                      <li>Selecciona la opción <strong>&ldquo;Pago Simple / Cobro QR&rdquo;</strong>.</li>
-                      <li>Escanea este código o sube la imagen descargada.</li>
-                      <li>Confirma el monto de <strong>{amountBob.toFixed(2)} Bs</strong>. El sistema se activará en segundos automáticamente.</li>
+                      <li>Abre <strong>Baneco Móvil</strong> o la app de tu banco (BNB, BCP, Bisa, Mercantil, Unión, Ganadero, etc.).</li>
+                      <li>Selecciona <strong>&ldquo;Pago Simple / Cobro QR&rdquo;</strong>.</li>
+                      <li>Escanea este código QR o sube la imagen descargada.</li>
+                      <li>Confirma la transferencia de <strong>{amountBob.toFixed(2)} Bs</strong>. El pago se vinculará directamente a la cuenta <strong>{accountNumber}</strong>.</li>
                     </ol>
 
                     <div className="pt-2 flex flex-wrap gap-2 border-t border-[#F2ECE1]">
                       <button
                         type="button"
                         onClick={handleCopyAmount}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
                       >
                         {copiedAmount ? <Check className="w-3.5 h-3.5 text-[#4A634E]" /> : <Copy className="w-3.5 h-3.5" />}
                         <span>{copiedAmount ? 'Monto Copiado' : `Copiar ${amountBob.toFixed(2)} Bs`}</span>
@@ -420,8 +364,17 @@ export const BanecoCheckoutModal = ({
 
                       <button
                         type="button"
+                        onClick={handleCopyAccount}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
+                      >
+                        {copiedAccount ? <Check className="w-3.5 h-3.5 text-[#4A634E]" /> : <Copy className="w-3.5 h-3.5" />}
+                        <span>{copiedAccount ? 'Cuenta Copiada' : 'Copiar Cuenta'}</span>
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={handleDownloadQr}
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors"
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-[11px] font-semibold text-[#544D46] hover:bg-[#F2ECE1] transition-colors cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5" />
                         <span>Descargar QR</span>
@@ -432,10 +385,10 @@ export const BanecoCheckoutModal = ({
                   {/* Indicador de Polling / Esperando Pago */}
                   <div className="flex items-center justify-center gap-2 text-[11px] text-[#7A7167]">
                     <Loader2 className="w-3.5 h-3.5 animate-spin text-[#C29837]" />
-                    <span>Esperando confirmación bancaria en tiempo real...</span>
+                    <span>Esperando confirmación de Banco Económico en tiempo real...</span>
                   </div>
 
-                  {/* BOTÓN MODO SANDBOX / PRUEBAS INMEDIATAS */}
+                  {/* BOTÓN MODO SANDBOX / SIMULADOR PARA PRUEBAS */}
                   <div className="p-3 rounded-2xl bg-[#FFF8E6] border border-[#E8D7B0] text-center space-y-2">
                     <span className="text-[10px] font-bold text-[#8C6B32] uppercase tracking-wider block">
                       Entorno de Pruebas / Sandbox Baneco
@@ -454,133 +407,13 @@ export const BanecoCheckoutModal = ({
                       <span>Simular Pago Exitoso (1 Clic)</span>
                     </button>
                     <p className="text-[10px] text-[#7A7167]">
-                      Permite probar la confirmación automática e inmediata sin transferir fondos reales.
+                      Activa el memorial instantáneamente para verificar el flujo completo de prueba.
                     </p>
                   </div>
                 </div>
               )}
 
-              {/* PESTAÑA 2: TARJETA DÉBITO / CRÉDITO BANECO */}
-              {activeTab === 'card' && (
-                <form onSubmit={handleCardSubmit} className="space-y-3.5">
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#544D46] mb-1">
-                      Número de Tarjeta (Visa / Mastercard Baneco)
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        required
-                        maxLength={19}
-                        placeholder="4500 0000 0000 0000"
-                        value={cardNumber}
-                        onChange={(e) => setCardNumber(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs sm:text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
-                      />
-                      <CreditCard className="w-4 h-4 text-[#8C847A] absolute right-3 top-3" />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#544D46] mb-1">
-                        Vencimiento (MM/AA)
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={5}
-                        placeholder="MM/AA"
-                        value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40 text-center"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#544D46] mb-1 flex items-center justify-between">
-                        <span>CVV</span>
-                        <span className="text-[10px] text-[#8C847A]">3 dígitos</span>
-                      </label>
-                      <input
-                        type="password"
-                        required
-                        maxLength={4}
-                        placeholder="•••"
-                        value={cardCvv}
-                        onChange={(e) => setCardCvv(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40 text-center"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-[11px] font-semibold text-[#544D46] mb-1">
-                      Nombre del Titular (Como figura en la tarjeta)
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="ej. MARIANA DE MENDOZA"
-                      value={cardHolder}
-                      onChange={(e) => setCardHolder(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#544D46] mb-1">
-                        Cédula de Identidad o NIT
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="ej. 5892341 LP"
-                        value={documentNumber}
-                        onChange={(e) => setDocumentNumber(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-semibold text-[#544D46] mb-1">
-                        Correo para Factura
-                      </label>
-                      <input
-                        type="email"
-                        placeholder="familiar@email.com"
-                        value={payerEmail}
-                        onChange={(e) => setPayerEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/40"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isProcessingCard}
-                    className="w-full py-3 rounded-full bg-[#2D2926] hover:bg-[#433E3A] text-white text-xs sm:text-sm font-semibold transition-all shadow-md cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
-                  >
-                    {isProcessingCard ? (
-                      <>
-                        <Loader2 className="w-4 h-4 animate-spin text-[#C29837]" />
-                        <span>Procesando con Baneco...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="w-3.5 h-3.5 text-[#C29837]" />
-                        <span>Pagar {amountBob.toFixed(2)} Bs</span>
-                      </>
-                    )}
-                  </button>
-
-                  <p className="text-[10px] text-center text-[#8C847A] flex items-center justify-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#4A634E]" />
-                    <span>Conexión cifrada TLS 1.3 procesada bajo normativa ASFI Bolivia</span>
-                  </p>
-                </form>
-              )}
-
-              {/* PESTAÑA 3: ASISTENCIA Y TRANSFERENCIA DIRECTA */}
+              {/* PESTAÑA 2: ATENCIÓN Y TRANSFERENCIA POR WHATSAPP */}
               {activeTab === 'whatsapp' && (
                 <div className="bg-white rounded-3xl p-5 border border-[#EAE4D8] text-center space-y-4">
                   <div className="w-12 h-12 rounded-full bg-[#EBF8EE] text-[#25D366] flex items-center justify-center mx-auto">
@@ -588,16 +421,16 @@ export const BanecoCheckoutModal = ({
                   </div>
                   <div>
                     <h4 className="font-memorial text-lg text-[#2D2926]">
-                      Atención Concierge para Familias
+                      Atención Personalizada por WhatsApp
                     </h4>
                     <p className="text-xs text-[#6E665D] mt-1 max-w-sm mx-auto leading-relaxed">
-                      Si prefieres pagar mediante transferencia directa a nuestra cuenta bancaria en Banco Económico o necesitas asistencia para redactar la biografía, te atendemos con calidez por WhatsApp.
+                      Si prefieres realizar una transferencia directa a nuestra cuenta de <strong>Banco Económico N° {accountNumber}</strong> o deseas que un asesor te asista en la carga de fotos o redacción de la biografía, escríbenos directamente.
                     </p>
                   </div>
 
                   <a
                     href={`https://wa.me/59170000000?text=${encodeURIComponent(
-                      `Hola, deseo activar el ${plan.name} (${amountBob} Bs) en Hobituario mediante Banco Económico o transferencia.`
+                      `Hola, deseo activar el ${plan.name} (${amountBob} Bs) en Hobituario mediante transferencia a la cuenta de Banco Económico ${accountNumber}.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"

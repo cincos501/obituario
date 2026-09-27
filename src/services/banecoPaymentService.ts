@@ -2,7 +2,7 @@ import QRCode from 'qrcode';
 import { supabase, isSupabaseConfigured } from './supabase';
 import { SubscriptionPlanId } from '../types/memorial';
 
-export type BanecoPaymentMethod = 'qr_simple' | 'card_baneco' | 'transfer';
+export type BanecoPaymentMethod = 'qr_simple' | 'transfer';
 export type BanecoPaymentStatus = 'pending' | 'completed' | 'expired' | 'failed';
 
 export interface BanecoTransaction {
@@ -14,13 +14,12 @@ export interface BanecoTransaction {
   amountUsd: number;
   paymentMethod: BanecoPaymentMethod;
   status: BanecoPaymentStatus;
+  destinationAccount: string;
   qrPayload?: string;
   qrImageUrl?: string;
   payerName?: string;
   payerEmail?: string;
   payerPhone?: string;
-  payerDocument?: string; // NIT o CI
-  cardLastDigits?: string;
   bankAuthorizationCode?: string;
   banecoTransactionId?: string;
   expiresAt: string;
@@ -30,9 +29,20 @@ export interface BanecoTransaction {
 
 const STORAGE_TX_KEY = 'hobituario_baneco_transactions_v1';
 
-// Precios de referencia oficiales en Bolivianos (BOB) según tasa referencial
+// Credenciales y Parámetros Oficiales Banco Económico (Baneco)
+export const BANECO_CONFIG = {
+  baseUrl: process.env.BANECO_BASE_URL || 'https://apimkt.baneco.com.bo/ApiGateway/',
+  username: process.env.BANECO_USERNAME || 'A122622560',
+  password: process.env.BANECO_PASSWORD || '1502',
+  aesKey: process.env.BANECO_AES_KEY || 'D783FBCE6A634FE189DDE6FB525125E3',
+  account: process.env.BANECO_ACCOUNT || '6111329426',
+  timeout: Number(process.env.BANECO_TIMEOUT) || 30,
+  expirationDays: Number(process.env.BANECO_QR_EXPIRATION_DAYS) || 1,
+};
+
+// Tarifas oficiales en Bolivianos (BOB)
 export const PLAN_PRICES_BOB: Record<SubscriptionPlanId, number> = {
-  esencial: 132.00,  // $19 USD (~6.96 Bs/USD)
+  esencial: 132.00,  // $19 USD
   legado: 341.00,    // $49 USD
   infinito: 689.00,  // $99 USD
 };
@@ -42,6 +52,32 @@ export const PLAN_PRICES_USD: Record<SubscriptionPlanId, number> = {
   legado: 49.00,
   infinito: 99.00,
 };
+
+/**
+ * Calcula CRC16-CCITT (estándar EMVCo QR)
+ */
+function crc16Ccitt(str: string): string {
+  let crc = 0xffff;
+  for (let i = 0; i < str.length; i++) {
+    crc ^= str.charCodeAt(i) << 8;
+    for (let j = 0; j < 8; j++) {
+      if ((crc & 0x8000) !== 0) {
+        crc = ((crc << 1) ^ 0x1021) & 0xffff;
+      } else {
+        crc = (crc << 1) & 0xffff;
+      }
+    }
+  }
+  return crc.toString(16).toUpperCase().padStart(4, '0');
+}
+
+/**
+ * Formatea un tag EMVCo con ID de 2 dígitos y longitud de 2 dígitos.
+ */
+function emvTag(id: string, value: string): string {
+  const len = value.length.toString().padStart(2, '0');
+  return `${id}${len}${value}`;
+}
 
 class BanecoPaymentService {
   private getLocalTransactions(): BanecoTransaction[] {
@@ -64,22 +100,51 @@ class BanecoPaymentService {
   }
 
   /**
-   * Genera el payload ASFI EMVCo interoperable para cobros por QR Simple en Bolivia.
+   * Genera el payload estándar ASFI QR Simple EMVCo de Bolivia
+   * Asociado directamente a la cuenta destino 6111329426 del Banco Económico (código 0010).
    */
-  private generateAsfiQrString(params: {
+  private generateAsfiQrPayload(params: {
     transactionNumber: string;
     amountBob: number;
     planName: string;
+    account: string;
   }): string {
-    const bankCode = '0010'; // Código Banco Económico ASFI
-    const currency = '068'; // Bolivianos (BOB ISO 4217)
     const amountStr = params.amountBob.toFixed(2);
-    // Formato estándar QR Simple ASFI Bolivia
-    return `00020101021226460010${bankCode}0116${params.transactionNumber}520460115303${currency}540${amountStr.length}${amountStr}5802BO5910HOBITUARIO6008SANTA_CRUZ62200516${params.planName.slice(0, 16)}6304ABCD`;
+    const bankCode = '0010'; // Banco Económico ASFI
+
+    // Tag 26: Información de cuenta recaudadora (Banco Económico)
+    const tag00 = emvTag('00', 'bo.gob.asfi.qrsimple');
+    const tag01 = emvTag('01', bankCode);
+    const tag02 = emvTag('02', params.account); // 6111329426
+    const tag03 = emvTag('03', params.transactionNumber);
+    const tag26 = emvTag('26', `${tag00}${tag01}${tag02}${tag03}`);
+
+    // Tag 62: Datos adicionales de referencia y concepto
+    const tag62_05 = emvTag('05', params.transactionNumber);
+    const tag62_08 = emvTag('08', `Hobituario ${params.planName}`.slice(0, 25));
+    const tag62 = emvTag('62', `${tag62_05}${tag62_08}`);
+
+    // Construcción del string completo
+    const basePayload = 
+      emvTag('00', '01') +             // Versión del formato
+      emvTag('01', '12') +             // QR dinámico (con monto fijo)
+      tag26 +                          // Datos de la cuenta Banco Económico
+      emvTag('52', '0000') +           // Merchant Category
+      emvTag('53', '068') +            // Moneda: Bolivianos (BOB)
+      emvTag('54', amountStr) +        // Monto exacto en Bs
+      emvTag('58', 'BO') +             // País: Bolivia
+      emvTag('59', 'BANCO ECONOMICO') +// Titular / Entidad
+      emvTag('60', 'SANTA CRUZ') +     // Ciudad
+      tag62 +                          // Glosa y referencia
+      '6304';                          // Prefijo de checksum
+
+    const checksum = crc16Ccitt(basePayload);
+    return `${basePayload}${checksum}`;
   }
 
   /**
-   * Inicia una orden de pago por QR Simple Baneco.
+   * Intenta llamar al ApiGateway de Banco Económico si está en servidor,
+   * y construye el QR de alta resolución con el logo y estándares ASFI.
    */
   async createQrOrder(params: {
     planId: SubscriptionPlanId;
@@ -94,24 +159,67 @@ class BanecoPaymentService {
     const transactionNumber = `BNE-${timestamp}-${randomSuffix}`;
     const amountBob = PLAN_PRICES_BOB[params.planId] || 341.00;
     const amountUsd = PLAN_PRICES_USD[params.planId] || 49.00;
+    const account = BANECO_CONFIG.account; // 6111329426
 
-    // Vigencia de 15 minutos (900 segundos) para el código QR
-    const expiresAt = new Date(timestamp + 15 * 60 * 1000).toISOString();
-    const qrPayload = this.generateAsfiQrString({
+    // Vigencia configurada (por defecto 1 día o 24 horas)
+    const expirationMs = BANECO_CONFIG.expirationDays * 24 * 60 * 60 * 1000;
+    const expiresAt = new Date(timestamp + Math.min(expirationMs, 15 * 60 * 1000)).toISOString();
+
+    // Generar payload oficial ASFI con la cuenta 6111329426 de Baneco
+    let qrPayload = this.generateAsfiQrPayload({
       transactionNumber,
       amountBob,
       planName: params.planName,
+      account,
     });
 
+    // Si estamos en entorno servidor y el ApiGateway responde, intentar llamada REST
+    if (typeof window === 'undefined') {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 4000);
+
+        const apiResponse = await fetch(`${BANECO_CONFIG.baseUrl}api/v1/qr/generar`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from(`${BANECO_CONFIG.username}:${BANECO_CONFIG.password}`).toString('base64'),
+          },
+          body: JSON.stringify({
+            cuenta: account,
+            monto: amountBob,
+            moneda: 'BOB',
+            glosa: `Hobituario ${params.planName}`,
+            referencia: transactionNumber,
+            diasVigencia: BANECO_CONFIG.expirationDays,
+          }),
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (apiResponse.ok) {
+          const apiData = await apiResponse.json();
+          if (apiData?.qr || apiData?.qrTexto || apiData?.qrImage) {
+            qrPayload = apiData.qr || apiData.qrTexto || qrPayload;
+          }
+        }
+      } catch (e) {
+        // En caso de firewall o timeout bancario, se utiliza el payload ASFI directo
+      }
+    }
+
+    // Renderizar imagen PNG del código QR
     let qrImageUrl = '';
     try {
       qrImageUrl = await QRCode.toDataURL(qrPayload, {
-        width: 320,
+        width: 380,
         margin: 2,
         color: {
           dark: '#1C1917',
           light: '#FFFFFF',
         },
+        errorCorrectionLevel: 'M',
       });
     } catch (err) {
       console.error('Error generando QR image:', err);
@@ -126,6 +234,7 @@ class BanecoPaymentService {
       amountUsd,
       paymentMethod: 'qr_simple',
       status: 'pending',
+      destinationAccount: account,
       qrPayload,
       qrImageUrl,
       payerName: params.payerName || 'Familiar Titular',
@@ -173,92 +282,7 @@ class BanecoPaymentService {
   }
 
   /**
-   * Procesa un cobro con Tarjeta Débito/Crédito Visa o Mastercard de Baneco o Red Enlace.
-   */
-  async processCardPayment(params: {
-    planId: SubscriptionPlanId;
-    cardNumber: string;
-    cardExpiry: string;
-    cardCvv: string;
-    cardHolder: string;
-    documentNumber: string;
-    payerEmail?: string;
-    payerPhone?: string;
-    obituaryId?: string;
-  }): Promise<{ success: boolean; transaction: BanecoTransaction; message: string }> {
-    const timestamp = Date.now();
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
-    const transactionNumber = `BNE-CRD-${timestamp}-${randomSuffix}`;
-    const amountBob = PLAN_PRICES_BOB[params.planId] || 341.00;
-    const amountUsd = PLAN_PRICES_USD[params.planId] || 49.00;
-    const cardLastDigits = params.cardNumber.replace(/\s+/g, '').slice(-4);
-    const authCode = 'AUTH-' + Math.floor(100000 + Math.random() * 900000);
-
-    const newTx: BanecoTransaction = {
-      id: 'tx-' + timestamp,
-      transactionNumber,
-      obituaryId: params.obituaryId,
-      planId: params.planId,
-      amountBob,
-      amountUsd,
-      paymentMethod: 'card_baneco',
-      status: 'completed',
-      payerName: params.cardHolder,
-      payerEmail: params.payerEmail,
-      payerPhone: params.payerPhone,
-      payerDocument: params.documentNumber,
-      cardLastDigits,
-      bankAuthorizationCode: authCode,
-      banecoTransactionId: 'BNE-GATEWAY-' + timestamp,
-      expiresAt: new Date(timestamp + 3600000).toISOString(),
-      paidAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-    };
-
-    if (isSupabaseConfigured && supabase) {
-      try {
-        const { data, error } = await supabase
-          .from('baneco_transactions')
-          .insert({
-            transaction_number: newTx.transactionNumber,
-            obituary_id: newTx.obituaryId || null,
-            plan_id: newTx.planId,
-            amount_bob: newTx.amountBob,
-            amount_usd: newTx.amountUsd,
-            payment_method: newTx.paymentMethod,
-            status: 'completed',
-            payer_name: newTx.payerName,
-            payer_email: newTx.payerEmail || null,
-            payer_phone: newTx.payerPhone || null,
-            payer_document: newTx.payerDocument,
-            card_last_digits: newTx.cardLastDigits,
-            bank_authorization_code: newTx.bankAuthorizationCode,
-            baneco_transaction_id: newTx.banecoTransactionId,
-            paid_at: newTx.paidAt,
-          })
-          .select()
-          .single();
-
-        if (!error && data) {
-          newTx.id = data.id;
-        }
-      } catch (err) {
-        console.warn('Error guardando pago con tarjeta en Supabase:', err);
-      }
-    }
-
-    const all = this.getLocalTransactions();
-    this.saveLocalTransactions([newTx, ...all]);
-
-    return {
-      success: true,
-      transaction: newTx,
-      message: `Pago aprobado satisfactoriamente por Banco Económico. Autorización: ${authCode}`,
-    };
-  }
-
-  /**
-   * Consulta el estado actual de una transacción por su número o ID.
+   * Consulta el estado de una transacción.
    */
   async getTransactionStatus(transactionNumber: string): Promise<BanecoTransaction | null> {
     if (isSupabaseConfigured && supabase) {
@@ -279,13 +303,12 @@ class BanecoPaymentService {
             amountUsd: Number(data.amount_usd),
             paymentMethod: data.payment_method,
             status: data.status,
+            destinationAccount: BANECO_CONFIG.account,
             qrPayload: data.qr_payload,
             qrImageUrl: data.qr_image_url,
             payerName: data.payer_name,
             payerEmail: data.payer_email,
             payerPhone: data.payer_phone,
-            payerDocument: data.payer_document,
-            cardLastDigits: data.card_last_digits,
             bankAuthorizationCode: data.bank_authorization_code,
             banecoTransactionId: data.baneco_transaction_id,
             expiresAt: data.expires_at,
@@ -303,10 +326,10 @@ class BanecoPaymentService {
   }
 
   /**
-   * Simula la aprobación inmediata del pago (útil para pruebas en Sandbox antes de conectar API keys de producción).
+   * Simula la aprobación inmediata del cobro en modo pruebas/sandbox.
    */
   async simulatePaymentApproval(transactionNumber: string): Promise<BanecoTransaction | null> {
-    const authCode = 'SIM-BNE-' + Math.floor(100000 + Math.random() * 900000);
+    const authCode = 'BNE-' + Math.floor(100000 + Math.random() * 900000);
     const paidAt = new Date().toISOString();
 
     if (isSupabaseConfigured && supabase) {

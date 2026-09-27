@@ -116,13 +116,32 @@ class AuthService {
         });
 
         if (!error && data?.user) {
-          const role = (data.user.user_metadata?.role as UserRole) || 'family_owner';
+          let role = (data.user.user_metadata?.role as UserRole) || 'family_owner';
+          let name = data.user.user_metadata?.name || 'Usuario';
           const memorialSlug = data.user.user_metadata?.memorialSlug;
+
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role, full_name')
+              .eq('id', data.user.id)
+              .single();
+
+            if (profile?.role === 'super_admin') {
+              role = 'super_admin';
+            }
+            if (profile?.full_name) {
+              name = profile.full_name;
+            }
+          } catch {
+            // fallback a metadata
+          }
+
           const user: AuthUser = {
             id: data.user.id,
             email: data.user.email || cleanId,
             role,
-            name: data.user.user_metadata?.name || 'Usuario',
+            name,
             memorialSlug,
             createdAt: data.user.created_at,
           };
