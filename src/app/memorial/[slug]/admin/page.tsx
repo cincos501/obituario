@@ -965,26 +965,30 @@ export default function FamilyDashboardPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#544D46] mb-1">
-                  Fecha de Nacimiento
+                <label className="block text-xs font-semibold text-[#544D46] mb-1 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#C29837]" />
+                  <span>Fecha de Nacimiento</span>
                 </label>
                 <input
                   type="date"
                   value={birthDate}
                   onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none"
+                  onClick={(e) => (e.target as any).showPicker?.()}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/30 cursor-pointer"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#544D46] mb-1">
-                  Fecha de Partida
+                <label className="block text-xs font-semibold text-[#544D46] mb-1 flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 text-[#C29837]" />
+                  <span>Fecha de Partida</span>
                 </label>
                 <input
                   type="date"
                   value={deathDate}
                   onChange={(e) => setDeathDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none"
+                  onClick={(e) => (e.target as any).showPicker?.()}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/30 cursor-pointer"
                 />
               </div>
 
@@ -1165,23 +1169,30 @@ export default function FamilyDashboardPage() {
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-[#544D46]">Fecha</label>
+                      <label className="block font-semibold mb-1 text-[#544D46] flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5 text-[#C29837]" />
+                        <span>Fecha</span>
+                      </label>
                       <input
                         type="date"
                         value={editingService.date}
                         onChange={(e) => setEditingService({ ...editingService, date: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926]"
+                        onClick={(e) => (e.target as any).showPicker?.()}
+                        className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
                       />
                     </div>
 
                     <div>
-                      <label className="block font-semibold mb-1 text-[#544D46]">Horario</label>
+                      <label className="block font-semibold mb-1 text-[#544D46] flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#C29837]" />
+                        <span>Horario</span>
+                      </label>
                       <input
-                        type="text"
-                        placeholder="Ej. 10:00 AM o 14:00 - 21:00"
+                        type="time"
                         value={editingService.time}
                         onChange={(e) => setEditingService({ ...editingService, time: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926]"
+                        onClick={(e) => (e.target as any).showPicker?.()}
+                        className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
                       />
                     </div>
 
@@ -1361,23 +1372,30 @@ export default function FamilyDashboardPage() {
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-1 text-[#544D46]">Fecha de la Ceremonia</label>
+                    <label className="block font-semibold mb-1 text-[#544D46] flex items-center gap-1.5">
+                      <Calendar className="w-3.5 h-3.5 text-[#C29837]" />
+                      <span>Fecha de la Ceremonia</span>
+                    </label>
                     <input
                       type="date"
                       value={newServiceDate}
                       onChange={(e) => setNewServiceDate(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926]"
+                      onClick={(e) => (e.target as any).showPicker?.()}
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
                     />
                   </div>
 
                   <div>
-                    <label className="block font-semibold mb-1 text-[#544D46]">Horario</label>
+                    <label className="block font-semibold mb-1 text-[#544D46] flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-[#C29837]" />
+                      <span>Horario</span>
+                    </label>
                     <input
-                      type="text"
-                      placeholder="Ej. 10:00 AM o 14:00 - 21:00"
+                      type="time"
                       value={newServiceTime}
                       onChange={(e) => setNewServiceTime(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926]"
+                      onClick={(e) => (e.target as any).showPicker?.()}
+                      className="w-full px-3 py-2 rounded-xl border border-[#D8CABE] bg-white text-xs text-[#2D2926] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
                     />
                   </div>
 

@@ -311,12 +311,29 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
               </button>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-[#EAE4D8] text-xs space-y-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px]">
-                <p><span className="text-[#8C847A]">Plan:</span> <b>{createdCredentials.planName}</b></p>
-                <p><span className="text-[#8C847A]">Correo:</span> <b>{createdCredentials.clientEmail}</b></p>
+            <div className="bg-white p-4 rounded-2xl border border-[#EAE4D8] text-xs space-y-2.5 overflow-hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                <p><span className="text-[#8C847A]">Plan:</span> <b className="text-[#2D2926]">{createdCredentials.planName}</b></p>
+                <p><span className="text-[#8C847A]">Correo:</span> <b className="text-[#2D2926]">{createdCredentials.clientEmail}</b></p>
                 <p><span className="text-[#8C847A]">PIN de Acceso:</span> <b className="font-mono text-sm text-[#C29837]">{createdCredentials.pin}</b></p>
-                <p><span className="text-[#8C847A]">Panel Familiar:</span> <span className="font-mono text-[#7A7167] truncate">{createdCredentials.familyUrl}</span></p>
+              </div>
+
+              <div className="pt-2 border-t border-[#F2ECE1]">
+                <span className="text-[11px] text-[#8C847A] block mb-1">Enlace del Panel Familiar:</span>
+                <div className="flex items-center gap-1.5 p-2 bg-[#FAF7F2] rounded-xl border border-[#EDE5DA] overflow-hidden">
+                  <span className="font-mono text-[11px] text-[#544D46] break-all flex-1 select-all">{createdCredentials.familyUrl}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(createdCredentials.familyUrl);
+                      showNotice('Enlace del panel copiado.');
+                    }}
+                    className="p-1.5 rounded-lg hover:bg-[#EAE4D8] text-[#8C847A] hover:text-[#2D2926] shrink-0 cursor-pointer"
+                    title="Copiar enlace"
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
 

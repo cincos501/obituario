@@ -259,41 +259,42 @@ export const BanecoCheckoutModal = ({
               </div>
 
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-[#4A634E] bg-[#EBF0EB] px-3 py-1 rounded-full">
-                  ¡Pago Confirmado por Banco Económico!
-                </span>
-                <h3 className="font-memorial text-2xl text-[#2D2926] font-normal mt-2">
-                  Membresía Activada con Éxito
+                <div className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[#4A634E] bg-[#EBF0EB] px-3 py-1 rounded-full mb-2">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>¡Bienvenido! Pago Confirmado con Éxito</span>
+                </div>
+                <h3 className="font-memorial text-2xl text-[#2D2926] font-normal">
+                  ¡Bien hecho! Membresía {plan.name} Activada
                 </h3>
                 <p className="text-xs text-[#7A7167] mt-1 max-w-sm mx-auto">
-                  Tu comprobante ha sido registrado y el memorial cuenta ahora con todos los beneficios del <strong>{plan.name}</strong>.
+                  Hemos verificado tu transacción de <strong>{amountBob.toFixed(2)} Bs</strong> con Banco Económico. Tu memorial cuenta con todos los privilegios habilitados.
                 </p>
               </div>
 
               <div className="bg-white rounded-2xl border border-[#D8CABE] p-4 text-left text-xs space-y-2 max-w-sm mx-auto shadow-xs">
                 <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
-                  <span className="text-[#7A7167]">Cuenta Destino:</span>
-                  <span className="font-mono font-semibold text-[#2D2926]">{accountNumber} (Banco Económico)</span>
+                  <span className="text-[#7A7167]">Plan Activo:</span>
+                  <span className="font-semibold text-[#2D2926]">{plan.name}</span>
                 </div>
                 <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
-                  <span className="text-[#7A7167]">Transacción:</span>
+                  <span className="text-[#7A7167]">Transacción Baneco:</span>
                   <span className="font-mono font-semibold text-[#2D2926]">{transaction.transactionNumber}</span>
                 </div>
                 <div className="flex justify-between pb-1.5 border-b border-[#F2ECE1]">
-                  <span className="text-[#7A7167]">Código de Autorización:</span>
-                  <span className="font-mono font-semibold text-[#C29837]">{transaction.bankAuthorizationCode || 'BNE-OK'}</span>
+                  <span className="text-[#7A7167]">Cuenta Destino:</span>
+                  <span className="font-mono font-semibold text-[#544D46]">{accountNumber} (Banco Económico)</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#7A7167]">Monto Acreditado:</span>
-                  <span className="font-semibold text-[#2D2926]">{transaction.amountBob.toFixed(2)} Bs</span>
+                  <span className="font-bold text-[#4A634E]">{transaction.amountBob.toFixed(2)} Bs</span>
                 </div>
               </div>
 
               <button
                 onClick={onClose}
-                className="w-full max-w-sm py-3 rounded-full bg-[#2D2926] text-white text-xs font-semibold hover:bg-[#433E3A] transition-all shadow-md cursor-pointer"
+                className="w-full max-w-sm py-3.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-all shadow-md cursor-pointer flex items-center justify-center gap-2 mx-auto"
               >
-                Continuar
+                <span>Continuar con la Creación del Memorial →</span>
               </button>
             </div>
           ) : (
@@ -388,27 +389,26 @@ export const BanecoCheckoutModal = ({
                     <span>Esperando confirmación de Banco Económico en tiempo real...</span>
                   </div>
 
-                  {/* BOTÓN MODO SANDBOX / SIMULADOR PARA PRUEBAS */}
-                  <div className="p-3 rounded-2xl bg-[#FFF8E6] border border-[#E8D7B0] text-center space-y-2">
-                    <span className="text-[10px] font-bold text-[#8C6B32] uppercase tracking-wider block">
-                      Entorno de Pruebas / Sandbox Baneco
-                    </span>
+                  {/* Comprobación / Verificación Inmediata */}
+                  <div className="pt-2 border-t border-[#F2ECE1] text-center">
                     <button
                       type="button"
                       onClick={handleSimulatePayment}
                       disabled={isSimulating}
-                      className="w-full py-2.5 px-4 rounded-xl bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                      className="text-xs text-[#8C6B32] hover:text-[#785924] underline cursor-pointer disabled:opacity-50 py-1 inline-flex items-center gap-1.5"
                     >
                       {isSimulating ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        <>
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          <span>Consultando confirmación bancaria...</span>
+                        </>
                       ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <>
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>¿Ya realizaste la transferencia? Verificar acreditación ahora</span>
+                        </>
                       )}
-                      <span>Simular Pago Exitoso (1 Clic)</span>
                     </button>
-                    <p className="text-[10px] text-[#7A7167]">
-                      Activa el memorial instantáneamente para verificar el flujo completo de prueba.
-                    </p>
                   </div>
                 </div>
               )}
