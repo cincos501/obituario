@@ -143,3 +143,12 @@ body {
 .ambient-glow {
   background: radial-gradient(circle at 50% 20%, rgba(226, 172, 60, 0.09) 0%, rgba(251, 249, 245, 0) 70%);
 }
+
+/* Ocultar barra y bandera de Leaflet en mapas */
+.leaflet-control-attribution,
+.leaflet-attribution-flag {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}

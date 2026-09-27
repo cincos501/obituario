@@ -20,6 +20,11 @@ import {
 } from '../../../../types/memorial';
 import { SUBSCRIPTION_PLANS } from '../../../../data/plans';
 import { 
+  DEFAULT_AVATAR_PLACEHOLDER, 
+  DEFAULT_COVER_PLACEHOLDER, 
+  MEMORIAL_COVER_PRESETS 
+} from '../../../../data/memorialPresets';
+import { 
   Heart, 
   Flame, 
   Image as ImageIcon, 
@@ -582,6 +587,38 @@ export default function FamilyDashboardPage() {
                 aspectRatio="wide"
                 cropShape="wide"
               />
+
+              {/* Selector de Portadas Solemnes Predefinidas */}
+              <div className="pt-2">
+                <span className="text-[11px] font-semibold text-[#7A7167] block mb-2">
+                  O escoge una portada solemne con 1 clic:
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {MEMORIAL_COVER_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setCoverPhotoUrl(preset.url)}
+                      className={`group relative rounded-xl overflow-hidden border-2 text-left transition-all cursor-pointer ${
+                        coverPhotoUrl === preset.url
+                          ? 'border-[#C29837] ring-2 ring-[#C29837]/30 shadow-xs'
+                          : 'border-[#EDE5DA] hover:border-[#C29837]/60'
+                      }`}
+                    >
+                      <div className="h-14 w-full bg-[#EAE4D8] overflow-hidden">
+                        <img
+                          src={preset.thumbnail}
+                          alt={preset.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                      <span className="block text-[10px] p-1 text-[#544D46] truncate font-medium">
+                        {preset.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="pt-6 border-t border-[#F2ECE1] flex justify-end">
@@ -665,7 +702,7 @@ export default function FamilyDashboardPage() {
                     }`}
                   >
                     <img
-                      src={mainPhotoUrl || 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400'}
+                      src={mainPhotoUrl || DEFAULT_AVATAR_PLACEHOLDER}
                       alt="Vista previa"
                       className="w-full h-full object-cover"
                     />

@@ -40,14 +40,16 @@ export const Navbar = () => {
 
         {/* Enlaces de navegación */}
         <nav className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-          <Link
-            href="/planes"
-            className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium text-[#655E57] hover:text-[#2D2926] hover:bg-[#F2ECE1] transition-colors shrink-0"
-          >
-            <Tag className="w-3.5 h-3.5 text-[#C29837]" />
-            <span className="hidden sm:inline">Membresías</span>
-            <span className="sm:hidden">Planes</span>
-          </Link>
+          {!currentUser && (
+            <Link
+              href="/planes"
+              className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-medium text-[#655E57] hover:text-[#2D2926] hover:bg-[#F2ECE1] transition-colors shrink-0"
+            >
+              <Tag className="w-3.5 h-3.5 text-[#C29837]" />
+              <span className="hidden sm:inline">Membresías</span>
+              <span className="sm:hidden">Planes</span>
+            </Link>
+          )}
 
           {/* Estado de Autenticación según Rol del Usuario */}
           {currentUser ? (

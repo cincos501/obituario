@@ -17,21 +17,13 @@ import {
   ArrowRight, 
   MessageCircle,
   Lock,
-  Tag
+  Tag,
+  LogIn
 } from 'lucide-react';
 
 export default function HomePage() {
   const [billingCycle, setBillingCycle] = useState<'one-time' | 'annual'>('one-time');
-  const [privateSearchQuery, setPrivateSearchQuery] = useState('');
-  const whatsappNumber = '59170000000'; // Puedes reemplazarlo por el número de tu negocio
-
-  const handlePrivateSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!privateSearchQuery.trim()) return;
-    // Si escribe el slug o nombre, redirigir
-    const cleanSlug = privateSearchQuery.trim().toLowerCase().replace(/\s+/g, '-');
-    window.location.href = `/memorial/${cleanSlug}`;
-  };
+  const whatsappNumber = '59170000000';
 
   return (
     <div className="min-h-screen bg-[#FBF9F5] text-[#2D2926] flex flex-col selection:bg-[#E8DED1]">
@@ -51,7 +43,7 @@ export default function HomePage() {
             </p>
 
             {/* CTAs Principales */}
-            <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <a
                 href="#planes"
                 className="flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#8C6B32] hover:bg-[#785924] text-white text-xs sm:text-sm font-semibold transition-all shadow-md hover:shadow-lg cursor-pointer"
@@ -65,29 +57,9 @@ export default function HomePage() {
                 href="/login"
                 className="flex items-center gap-2 px-7 py-3.5 rounded-full bg-white text-[#4A4540] border border-[#DFCDB8] text-xs sm:text-sm font-semibold hover:bg-[#F3ECE0] transition-colors shadow-xs cursor-pointer"
               >
-                <Lock className="w-4 h-4 text-[#8C847A]" />
-                <span>Acceso Familiar con Código</span>
+                <LogIn className="w-4 h-4 text-[#8C6B32]" />
+                <span>¿Ya tienes cuenta? Ingresar</span>
               </Link>
-            </div>
-
-            {/* Buscador Rápido de Memorial Familiar Privado */}
-            <div className="max-w-md mx-auto bg-white/80 backdrop-blur-sm border border-[#EAE4D8] rounded-2xl p-2.5 shadow-sm">
-              <form onSubmit={handlePrivateSearch} className="flex items-center gap-2">
-                <Lock className="w-4 h-4 text-[#8C847A] ml-2 shrink-0" />
-                <input
-                  type="text"
-                  placeholder="¿Tienes el enlace o código de un familiar? Ingresa aquí..."
-                  value={privateSearchQuery}
-                  onChange={(e) => setPrivateSearchQuery(e.target.value)}
-                  className="w-full bg-transparent text-xs text-[#2D2926] placeholder:text-[#9A9388] focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-[#8C6B32] hover:bg-[#785924] text-white text-xs font-semibold shrink-0 cursor-pointer shadow-xs"
-                >
-                  Abrir
-                </button>
-              </form>
             </div>
           </div>
         </section>
@@ -342,18 +314,29 @@ export default function HomePage() {
                     </ul>
                   </div>
 
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm ${plan.isPopular
-                        ? 'bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-md'
-                        : 'bg-[#8C6B32] hover:bg-[#785924] text-white'
+                  <div className="space-y-2 pt-2 border-t border-[#F2ECE1]">
+                    <Link
+                      href={`/crear?plan=${plan.id}`}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm ${
+                        plan.isPopular
+                          ? 'bg-[#8C6B32] hover:bg-[#785924] text-white shadow-md'
+                          : 'bg-[#2D2926] hover:bg-[#433E3A] text-white'
                       }`}
-                  >
-                    <MessageCircle className="w-4 h-4 fill-white" />
-                    <span>Contratar por WhatsApp</span>
-                  </a>
+                    >
+                      <QrCode className="w-4 h-4 text-[#F5C354]" />
+                      <span>Pagar con Baneco (QR Simple)</span>
+                    </Link>
+
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[11px] font-semibold transition-all border border-[#D8CABE] bg-[#FAF7F2] text-[#544D46] hover:bg-[#F2ECE1]"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                      <span>Consultar por WhatsApp</span>
+                    </a>
+                  </div>
                 </div>
               );
             })}
@@ -370,10 +353,12 @@ export default function HomePage() {
             <span>— Plataforma de Preservación y Paz Eterna</span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center sm:justify-end">
             <Link href="/planes" className="hover:text-white transition-colors">Membresías</Link>
             <span>•</span>
-            <Link href="/login" className="hover:text-white transition-colors">Acceso Familiar</Link>
+            <Link href="/login" className="hover:text-white transition-colors">Ingresar</Link>
+            <span>•</span>
+            <Link href="/terminos" className="text-[#E8D7B0] hover:text-white transition-colors font-medium">Términos y Condiciones</Link>
             <span>•</span>
             <Link href="/admin" className="hover:text-white transition-colors">Super Admin</Link>
           </div>

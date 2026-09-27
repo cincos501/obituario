@@ -8,6 +8,7 @@ import { memorialService } from '../../services/memorialService';
 import { authService } from '../../services/authService';
 import { Obituary, SubscriptionPlanId } from '../../types/memorial';
 import { SUBSCRIPTION_PLANS } from '../../data/plans';
+import { DEFAULT_AVATAR_PLACEHOLDER, DEFAULT_COVER_PLACEHOLDER } from '../../data/memorialPresets';
 import { 
   Users, 
   Check, 
@@ -174,8 +175,8 @@ Cualquier consulta o asistencia que necesite, estamos a su entera disposición.`
         fullName: `Espacio de la Familia ${regClientName}`,
         epitaph: 'En memoria perenne de nuestro ser amado.',
         biography: 'La familia redactará aquí la historia y recuerdos entrañables de vida.',
-        mainPhotoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
-        coverPhotoUrl: 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=1600&q=80',
+        mainPhotoUrl: DEFAULT_AVATAR_PLACEHOLDER,
+        coverPhotoUrl: DEFAULT_COVER_PLACEHOLDER,
         birthDate: '1950-01-01',
         deathDate: '2025-01-01',
         isPublic: true,

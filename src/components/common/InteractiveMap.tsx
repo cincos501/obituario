@@ -51,17 +51,19 @@ export const InteractiveMap = ({
         mapInstanceRef.current.remove();
       }
 
-      // Crear instancia de mapa con OpenStreetMap (100% Gratuito y sin API Key)
+      // Crear instancia de mapa sin watermark molesto
       const map = L.map(mapContainerRef.current, {
         center: [lat, lng],
         zoom: zoom,
         zoomControl: true,
         scrollWheelZoom: false,
+        attributionControl: false,
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
+      // Mosaico detallado, cálido y elegante CartoDB Voyager / OSM Retina
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 20,
       }).addTo(map);
 
       // Icono personalizado solemne

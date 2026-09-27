@@ -10,6 +10,11 @@ import { authService } from '../../services/authService';
 import { FuneralService, SubscriptionPlanId } from '../../types/memorial';
 import { SUBSCRIPTION_PLANS } from '../../data/plans';
 import { 
+  DEFAULT_AVATAR_PLACEHOLDER, 
+  DEFAULT_COVER_PLACEHOLDER, 
+  MEMORIAL_COVER_PRESETS 
+} from '../../data/memorialPresets';
+import { 
   Flame, 
   Heart, 
   Calendar, 
@@ -24,7 +29,9 @@ import {
   Copy,
   Building2,
   QrCode,
-  CreditCard
+  CreditCard,
+  KeyRound,
+  RotateCw
 } from 'lucide-react';
 
 function CreateMemorialForm() {
@@ -43,12 +50,13 @@ function CreateMemorialForm() {
   const [epitaph, setEpitaph] = useState('');
   const [biography, setBiography] = useState('');
   const [mainPhotoUrl, setMainPhotoUrl] = useState('');
-  const [coverPhotoUrl, setCoverPhotoUrl] = useState('');
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState(DEFAULT_COVER_PLACEHOLDER);
 
   // Datos SaaS & Familia
   const [selectedPlanId, setSelectedPlanId] = useState<SubscriptionPlanId>(planParam || 'legado');
   const [ownerName, setOwnerName] = useState('');
   const [ownerEmail, setOwnerEmail] = useState('');
+  const [accessPin, setAccessPin] = useState(() => Math.floor(1000 + Math.random() * 9000).toString());
   const [moderationRequired, setModerationRequired] = useState(true);
   const [createdCredentials, setCreatedCredentials] = useState<{ email: string; pass: string; slug: string; name: string } | null>(null);
 
@@ -96,12 +104,10 @@ function CreateMemorialForm() {
       const year = new Date(deathDate).getFullYear() || new Date().getFullYear();
       const slug = `${baseSlug}-${year}-${Math.floor(100 + Math.random() * 900)}`;
 
-      // Generar PIN de 4 dígitos unificado tanto para Supabase (access_pin) como para credenciales familiares
-      const generatedPin = Math.floor(1000 + Math.random() * 9000).toString();
-
-      const photoToUse =
-        mainPhotoUrl ||
-        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800';
+      // Usar PIN/contraseña definido por el usuario o generar uno de respaldo
+      const pinToUse = accessPin.trim() || Math.floor(1000 + Math.random() * 9000).toString();
+      const photoToUse = mainPhotoUrl || DEFAULT_AVATAR_PLACEHOLDER;
+      const coverToUse = coverPhotoUrl || DEFAULT_COVER_PLACEHOLDER;
 
       const initialServices: FuneralService[] = serviceLocation
         ? [
@@ -130,30 +136,30 @@ function CreateMemorialForm() {
         epitaph,
         biography,
         mainPhotoUrl: photoToUse,
-        coverPhotoUrl: coverPhotoUrl || undefined,
+        coverPhotoUrl: coverToUse,
         isPublic: true,
         planId: selectedPlanId,
         moderationRequired,
         ownerName: ownerName || 'Familiar Responsable',
         ownerEmail: ownerEmail || `familia.${slug}@hobituario.com`,
-        accessPin: generatedPin,
+        accessPin: pinToUse,
         services: initialServices,
       });
 
-      // Crear credenciales inmediatas para la familia con el mismo PIN
+      // Crear credenciales inmediatas para la familia con el PIN seleccionado
       const { user } = authService.registerFamilyUser({
         email: ownerEmail || `familia.${created.slug}@hobituario.com`,
         name: ownerName || 'Familiar Responsable',
         memorialSlug: created.slug,
-        password: generatedPin,
+        password: pinToUse,
       });
 
       // Auto-iniciar sesión como el familiar titular
-      await authService.login(user.email, generatedPin);
+      await authService.login(user.email, pinToUse);
 
       setCreatedCredentials({
         email: user.email,
-        pass: generatedPin,
+        pass: pinToUse,
         slug: created.slug,
         name: created.fullName,
       });
@@ -371,36 +377,69 @@ function CreateMemorialForm() {
         <div>
           <h2 className="font-memorial text-xl text-[#2D2926] mb-4 pb-2 border-b border-[#F2ECE1] flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-[#758774]" />
-            <span>Titular Familiar y Moderación de Respeto</span>
+            <span>Datos de tu Cuenta y Acceso Familiar</span>
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="block text-xs font-semibold text-[#544D46] mb-1">
-                Nombre del Familiar Responsable
+                Nombre del Titular Familiar *
               </label>
               <input
                 type="text"
+                required
                 placeholder="Ej. Mariana de Mendoza"
                 value={ownerName}
                 onChange={(e) => setOwnerName(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
               />
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-[#544D46] mb-1">
-                Correo Electrónico
+                Correo de Acceso (Tu Usuario) *
               </label>
               <input
                 type="email"
-                placeholder="Ej. mariana@hobituario.com"
+                required
+                placeholder="Ej. mariana@gmail.com"
                 value={ownerEmail}
                 onChange={(e) => setOwnerEmail(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-semibold text-[#544D46] flex items-center gap-1">
+                  <KeyRound className="w-3.5 h-3.5 text-[#C29837]" />
+                  <span>PIN o Contraseña *</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setAccessPin(Math.floor(1000 + Math.random() * 9000).toString())}
+                  className="text-[10px] text-[#C29837] hover:underline cursor-pointer flex items-center gap-0.5"
+                  title="Generar otro PIN numérico"
+                >
+                  <RotateCw className="w-2.5 h-2.5" />
+                  <span>Generar</span>
+                </button>
+              </div>
+              <input
+                type="text"
+                required
+                value={accessPin}
+                onChange={(e) => setAccessPin(e.target.value)}
+                placeholder="Ej. 4 dígitos o clave"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#D8CABE] bg-[#FAF7F2] text-sm font-mono text-[#2D2926] focus:outline-none focus:ring-2 focus:ring-[#C29837]/30"
               />
             </div>
           </div>
+
+          <p className="text-[11px] text-[#7A7167] mb-3 bg-[#FAF7F2] p-2.5 rounded-xl border border-[#EDE5DA] flex items-center gap-1.5">
+            <Lock className="w-3.5 h-3.5 text-[#C29837] shrink-0" />
+            <span><strong>¿Cómo entrarás después?</strong> Con este correo y PIN/contraseña podrás volver a ingresar en cualquier momento a tu panel desde el botón <strong>&ldquo;Ingresar&rdquo;</strong>.</span>
+          </p>
 
           <label className="flex items-start gap-3 p-3.5 bg-[#FAF7F2] border border-[#DFCDB8] rounded-xl cursor-pointer">
             <input
@@ -438,15 +477,49 @@ function CreateMemorialForm() {
               helperText="Sube su foto más serena. Podrás recortar el rostro perfectamente antes de guardar."
             />
 
-            <ImageUploader
-              label="Fotografía de Portada o Paisaje de Paz (Opcional)"
-              initialUrl={coverPhotoUrl}
-              onImageSelected={(url) => setCoverPhotoUrl(url)}
-              aspectRatio="wide"
-              cropShape="wide"
-              folder="covers"
-              helperText="Imagen panorámica de un lugar especial, atardecer o motivo floral que honre su memoria."
-            />
+            <div>
+              <ImageUploader
+                label="Fotografía de Portada o Paisaje de Paz (Opcional)"
+                initialUrl={coverPhotoUrl}
+                onImageSelected={(url) => setCoverPhotoUrl(url)}
+                aspectRatio="wide"
+                cropShape="wide"
+                folder="covers"
+                helperText="Sube una foto propia panorámica o elige una de nuestras portadas solemnes predefinidas:"
+              />
+
+              {/* Selector de Portadas Solemnes Predefinidas */}
+              <div className="mt-3">
+                <span className="text-[11px] font-semibold text-[#7A7167] block mb-2">
+                  O escoge un fondo solemne prediseñado (1 Clic):
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {MEMORIAL_COVER_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => setCoverPhotoUrl(preset.url)}
+                      className={`group relative rounded-xl overflow-hidden border-2 text-left transition-all cursor-pointer ${
+                        coverPhotoUrl === preset.url
+                          ? 'border-[#C29837] ring-2 ring-[#C29837]/30 shadow-xs'
+                          : 'border-[#EDE5DA] hover:border-[#C29837]/60'
+                      }`}
+                    >
+                      <div className="h-14 w-full bg-[#EAE4D8] overflow-hidden">
+                        <img
+                          src={preset.thumbnail}
+                          alt={preset.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        />
+                      </div>
+                      <span className="block text-[10px] p-1 text-[#544D46] truncate font-medium">
+                        {preset.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

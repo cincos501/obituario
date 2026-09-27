@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Obituary } from '../../types/memorial';
+import { DEFAULT_AVATAR_PLACEHOLDER, DEFAULT_COVER_PLACEHOLDER } from '../../data/memorialPresets';
 import { Flame, Flower2, QrCode, Share2, MapPin, Calendar, Settings } from 'lucide-react';
 
 interface Props {
@@ -49,15 +50,11 @@ export const MemorialHeader = ({
     <div className="relative w-full">
       {/* Portada suave o textura solemne */}
       <div className="h-64 sm:h-80 w-full relative overflow-hidden bg-[#EAE4D8]">
-        {obituary.coverPhotoUrl ? (
-          <img
-            src={obituary.coverPhotoUrl}
-            alt="Portada conmemorativa"
-            className="w-full h-full object-cover opacity-80 filter brightness-95"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-b from-[#E6DFD3] to-[#FBF9F5]" />
-        )}
+        <img
+          src={obituary.coverPhotoUrl || DEFAULT_COVER_PLACEHOLDER}
+          alt="Portada conmemorativa"
+          className="w-full h-full object-cover opacity-85 filter brightness-95"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#FBF9F5] via-[#FBF9F5]/40 to-transparent" />
       </div>
 
@@ -67,7 +64,7 @@ export const MemorialHeader = ({
         <div className="relative inline-block mx-auto mb-6">
           <div className="w-36 h-36 sm:w-48 sm:h-48 rounded-full p-1.5 bg-[#FAF7F2] border-2 border-[#D8CABE] shadow-xl relative z-10 overflow-hidden ring-4 ring-[#FAF8F5]">
             <img
-              src={obituary.mainPhotoUrl}
+              src={obituary.mainPhotoUrl || DEFAULT_AVATAR_PLACEHOLDER}
               alt={obituary.fullName}
               className="w-full h-full object-cover rounded-full filter contrast-105"
             />
