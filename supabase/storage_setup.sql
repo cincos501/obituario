@@ -19,8 +19,8 @@ ON CONFLICT (id) DO UPDATE SET
   file_size_limit = 10485760,
   allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
--- 2. HABILITAR ROW LEVEL SECURITY EN STORAGE.OBJECTS
-ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+-- NOTA: storage.objects ya tiene RLS habilitado por defecto en Supabase.
+-- No se debe ejecutar ALTER TABLE (provoca el error 42501 por permisos de sistema).
 
 -- 3. ELIMINAR POLÍTICAS PREVIAS PARA EVITAR CONFLICTOS
 DROP POLICY IF EXISTS "Lectura pública de memoriales" ON storage.objects;
