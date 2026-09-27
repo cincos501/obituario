@@ -216,133 +216,46 @@ CREATE POLICY "Familia y admin pueden moderar condolencias"
   ));
 
 -- ==============================================================================
--- DATOS INICIALES SEMILLA (SEED DEMO)
+-- 8. TABLA DE TRANSACCIONES Y PAGOS BANCO ECONÓMICO (BANECO)
 -- ==============================================================================
-INSERT INTO public.obituaries (
-  id,
-  slug,
-  full_name,
-  nickname,
-  birth_date,
-  death_date,
-  birth_place,
-  death_place,
-  epitaph,
-  biography,
-  main_photo_url,
-  cover_photo_url,
-  is_public,
-  access_pin,
-  plan_id,
-  moderation_required,
-  owner_name,
-  owner_email,
-  font_family,
-  theme_preset,
-  primary_accent,
-  candles_count,
-  flowers_count
-) VALUES (
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'carlos-alberto-mendoza-1948',
-  'Dr. Carlos Alberto Mendoza Vega',
-  'Carlitos',
-  '1948-03-15',
-  '2026-03-20',
-  'Tarija, Bolivia',
-  'La Paz, Bolivia',
-  '«Tu vocación curó cuerpos, tu bondad abrigó almas. Tu luz vivirá por siempre en cada vida que tocaste.»',
-  'El Dr. Carlos Alberto Mendoza Vega dedicó más de cuatro décadas de su vida al servicio de la medicina comunitaria y la docencia universitaria. Graduado con honores de la Universidad Mayor de San Andrés, ejerció con admirable empatía y entrega desinteresada en zonas rurales y urbanas.',
-  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800',
-  'https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&q=80&w=1600',
-  TRUE,
-  '1948',
-  'legado',
-  TRUE,
-  'Familia Mendoza',
-  'familiar@hobituario.com',
-  'serif-cormorant',
-  'ivory-warm',
-  'gold',
-  12,
-  5
-) ON CONFLICT (slug) DO NOTHING;
+CREATE TABLE IF NOT EXISTS public.baneco_transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  transaction_number TEXT UNIQUE NOT NULL,
+  obituary_id UUID REFERENCES public.obituaries(id) ON DELETE SET NULL,
+  plan_id TEXT NOT NULL CHECK (plan_id IN ('esencial', 'legado', 'infinito')),
+  amount_bob NUMERIC(10, 2) NOT NULL,
+  amount_usd NUMERIC(10, 2) NOT NULL,
+  payment_method TEXT NOT NULL CHECK (payment_method IN ('qr_simple', 'card_baneco', 'transfer')),
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'expired', 'failed')),
+  qr_payload TEXT,
+  qr_image_url TEXT,
+  payer_name TEXT,
+  payer_email TEXT,
+  payer_phone TEXT,
+  payer_document TEXT, -- NIT o Cédula de Identidad
+  card_last_digits TEXT,
+  bank_authorization_code TEXT,
+  baneco_transaction_id TEXT,
+  expires_at TIMESTAMPTZ,
+  paid_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
 
-INSERT INTO public.funeral_services (
-  obituary_id,
-  service_type,
-  title,
-  location_name,
-  address,
-  date,
-  time,
-  photo_url,
-  coordinates_lat,
-  coordinates_lng,
-  notes
-) VALUES (
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'velatorio',
-  'Capilla Ardiente y Velatorio Solemne',
-  'Parroquia San Roque - Salón San Cayetano',
-  'Plaza Campero esq. Corrado, Zona San Roque, Tarija',
-  '2026-03-27',
-  '10:00 AM - 22:00 PM',
-  'https://images.unsplash.com/photo-1548625361-1959779dfb8a?auto=format&fit=crop&w=800&q=80',
-  -21.5330,
-  -64.7330,
-  'Se celebrará una liturgia de oración a las 19:30. Se agradece vestir prendas sobrias.'
-), (
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'misa_cuerpo_presente',
-  'Misa de Cuerpo Presente',
-  'Catedral Metropolitana de Tarija',
-  'Plaza Luis de Fuentes, Centro Histórico, Tarija',
-  '2026-03-28',
-  '11:00 AM',
-  'https://images.unsplash.com/photo-1543872084-c7bd3822856f?auto=format&fit=crop&w=800&q=80',
-  -21.5323,
-  -64.7338,
-  'Concelebrada por el clero diocesano y transmitida en directo para familiares en el exterior.'
-), (
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  'sepelio',
-  'Cortejo Fúnebre y Descanso Eterno',
-  'Cementerio General de Tarija - Pabellón Los Ángeles',
-  'Calle Isaac Attie y Av. Membrillos, Tarija',
-  '2026-03-28',
-  '14:30 PM',
-  'https://images.unsplash.com/photo-1596495578065-6e0763fa1178?auto=format&fit=crop&w=800&q=80',
-  -21.5390,
-  -64.7280,
-  'Acompañamiento a pie desde la plaza de San Roque hasta el pabellón familiar.'
-) ON CONFLICT DO NOTHING;
+CREATE INDEX IF NOT EXISTS idx_baneco_tx_number ON public.baneco_transactions(transaction_number);
+CREATE INDEX IF NOT EXISTS idx_baneco_tx_status ON public.baneco_transactions(status);
 
-INSERT INTO public.timeline_events (
-  obituary_id,
-  year,
-  title,
-  description,
-  photo_url
-) VALUES 
-(
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  '1948',
-  'Nacimiento en San Lorenzo, Tarija',
-  'Nació en el seno de una familia de maestros de provincia. Desde temprana edad demostró gran vocación por el prójimo.',
-  'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80'
-),
-(
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  '1974',
-  'Graduación en Medicina con Máximos Honores',
-  'Culminó sus estudios universitarios y realizó su servicio social con abnegación en comunidades del Chaco.',
-  'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80'
-),
-(
-  'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
-  '1979',
-  'Matrimonio con Mariana Valdivia',
-  'Unieron sus vidas para edificar un hogar de principios intachables, criando a sus tres hijos con amor incondicional.',
-  'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80'
-) ON CONFLICT DO NOTHING;
+ALTER TABLE public.baneco_transactions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Transacciones consultables para verificar cobro"
+  ON public.baneco_transactions FOR SELECT
+  USING (TRUE);
+
+CREATE POLICY "Permitir registro de transacciones de pago"
+  ON public.baneco_transactions FOR INSERT
+  WITH CHECK (TRUE);
+
+CREATE POLICY "Permitir actualización de transacciones vía webhook o confirmación"
+  ON public.baneco_transactions FOR UPDATE
+  USING (TRUE);
+

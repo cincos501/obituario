@@ -1,9 +1,89 @@
-import { Obituary, Tribute, TributeType, SubscriptionPlanId } from '../types/memorial';
+import { 
+  Obituary, 
+  Tribute, 
+  TributeType, 
+  SubscriptionPlanId, 
+  FuneralService, 
+  TimelineMilestone,
+  MemorialFont,
+  MemorialThemePreset,
+  MemorialAccent
+} from '../types/memorial';
 import { INITIAL_MEMORIALS } from '../data/mockMemorials';
 import { supabase, isSupabaseConfigured } from './supabase';
 import { moderationService } from './moderationService';
 
 const STORAGE_KEY = 'hobituario_memorials_v1';
+
+function mapDbToObituary(row: any): Obituary {
+  return {
+    id: row.id,
+    slug: row.slug,
+    fullName: row.full_name || '',
+    nickname: row.nickname || undefined,
+    birthDate: row.birth_date ? String(row.birth_date).slice(0, 10) : '',
+    deathDate: row.death_date ? String(row.death_date).slice(0, 10) : '',
+    birthPlace: row.birth_place || undefined,
+    deathPlace: row.death_place || undefined,
+    epitaph: row.epitaph || '',
+    biography: row.biography || '',
+    mainPhotoUrl: row.main_photo_url || '',
+    coverPhotoUrl: row.cover_photo_url || undefined,
+    isPublic: row.is_public ?? true,
+    accessPin: row.access_pin || '1234',
+    planId: (row.plan_id as SubscriptionPlanId) || 'legado',
+    moderationRequired: row.moderation_required ?? true,
+    ownerEmail: row.owner_email || undefined,
+    ownerName: row.owner_name || undefined,
+    fontFamily: (row.font_family as MemorialFont) || 'serif-cormorant',
+    themePreset: (row.theme_preset as MemorialThemePreset) || 'ivory-warm',
+    primaryAccent: (row.primary_accent as MemorialAccent) || 'gold',
+    backgroundMusicUrl: row.background_music_url || undefined,
+    candlesCount: Number(row.candles_count) || 0,
+    flowersCount: Number(row.flowers_count) || 0,
+    services: (row.services || []).map((s: any): FuneralService => ({
+      id: s.id,
+      obituaryId: s.obituary_id || row.id,
+      serviceType: s.service_type,
+      title: s.title,
+      locationName: s.location_name,
+      address: s.address,
+      date: s.date ? String(s.date).slice(0, 10) : '',
+      time: s.time,
+      photoUrl: s.photo_url || undefined,
+      googleMapsUrl: s.google_maps_url || undefined,
+      coordinatesLat: s.coordinates_lat ? Number(s.coordinates_lat) : undefined,
+      coordinatesLng: s.coordinates_lng ? Number(s.coordinates_lng) : undefined,
+      livestreamUrl: s.livestream_url || undefined,
+      notes: s.notes || undefined,
+    })),
+    timeline: (row.timeline || []).map((t: any): TimelineMilestone => ({
+      id: t.id,
+      obituaryId: t.obituary_id || row.id,
+      year: String(t.year),
+      title: t.title,
+      description: t.description,
+      photoUrl: t.photo_url || undefined,
+    })),
+    tributes: (row.tributes || []).map((tr: any): Tribute => ({
+      id: tr.id,
+      obituaryId: tr.obituary_id || row.id,
+      authorName: tr.author_name,
+      authorEmail: tr.author_email || undefined,
+      relationship: tr.relationship || undefined,
+      message: tr.message,
+      tributeType: tr.tribute_type,
+      candleColor: tr.candle_color || undefined,
+      flowerType: tr.flower_type || undefined,
+      photoUrl: tr.photo_url || undefined,
+      createdAt: tr.created_at,
+      isApproved: tr.is_approved ?? false,
+      moderationStatus: tr.moderation_status || 'pending',
+      flaggedReason: tr.flagged_reason || undefined,
+    })),
+    gallery: [],
+  };
+}
 
 class MemorialService {
   private getLocalMemorials(): Obituary[] {
@@ -34,11 +114,18 @@ class MemorialService {
       try {
         const { data, error } = await supabase
           .from('obituaries')
-          .select('*, services:funeral_services(*), tributes:condolences_and_tributes(*), timeline:timeline_events(*)')
+          .select(`
+            *,
+            services:funeral_services(*),
+            timeline:timeline_events(*),
+            tributes:condolences_and_tributes(*)
+          `)
           .order('created_at', { ascending: false });
 
-        if (!error && data && data.length > 0) {
-          return data as unknown as Obituary[];
+        if (!error && data) {
+          const mapped = data.map(mapDbToObituary);
+          this.saveLocalMemorials(mapped);
+          return mapped;
         }
       } catch (err) {
         console.warn('Supabase fetch failed, falling back to local store:', err);
@@ -52,12 +139,17 @@ class MemorialService {
       try {
         const { data, error } = await supabase
           .from('obituaries')
-          .select('*, services:funeral_services(*), tributes:condolences_and_tributes(*), timeline:timeline_events(*)')
+          .select(`
+            *,
+            services:funeral_services(*),
+            timeline:timeline_events(*),
+            tributes:condolences_and_tributes(*)
+          `)
           .eq('slug', slug)
           .single();
 
         if (!error && data) {
-          return data as unknown as Obituary;
+          return mapDbToObituary(data);
         }
       } catch (err) {
         console.warn('Supabase getBySlug error, using local:', err);
@@ -68,9 +160,183 @@ class MemorialService {
     return all.find((m) => m.slug === slug) || null;
   }
 
+  async createObituary(
+    obituary: Omit<Obituary, 'id' | 'candlesCount' | 'flowersCount' | 'tributes' | 'timeline' | 'gallery'> & {
+      services?: FuneralService[];
+      timeline?: TimelineMilestone[];
+    }
+  ): Promise<Obituary> {
+    let newId = 'obit-' + Date.now();
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('obituaries')
+          .insert({
+            slug: obituary.slug,
+            full_name: obituary.fullName,
+            nickname: obituary.nickname || null,
+            birth_date: obituary.birthDate,
+            death_date: obituary.deathDate,
+            birth_place: obituary.birthPlace || null,
+            death_place: obituary.deathPlace || null,
+            epitaph: obituary.epitaph,
+            biography: obituary.biography,
+            main_photo_url: obituary.mainPhotoUrl,
+            cover_photo_url: obituary.coverPhotoUrl || null,
+            is_public: obituary.isPublic ?? true,
+            access_pin: obituary.accessPin || '1234',
+            plan_id: obituary.planId || 'legado',
+            moderation_required: obituary.moderationRequired ?? true,
+            owner_email: obituary.ownerEmail || null,
+            owner_name: obituary.ownerName || null,
+            font_family: obituary.fontFamily || 'serif-cormorant',
+            theme_preset: obituary.themePreset || 'ivory-warm',
+            primary_accent: obituary.primaryAccent || 'gold',
+            candles_count: 0,
+            flowers_count: 0,
+          })
+          .select()
+          .single();
+
+        if (!error && data) {
+          newId = data.id;
+
+          // Insertar servicios iniciales si existen
+          if (obituary.services && obituary.services.length > 0) {
+            const servicesToInsert = obituary.services.map((srv) => ({
+              obituary_id: newId,
+              service_type: srv.serviceType,
+              title: srv.title,
+              location_name: srv.locationName,
+              address: srv.address,
+              date: srv.date,
+              time: srv.time,
+              photo_url: srv.photoUrl || null,
+              google_maps_url: srv.googleMapsUrl || null,
+              coordinates_lat: srv.coordinatesLat || null,
+              coordinates_lng: srv.coordinatesLng || null,
+              livestream_url: srv.livestreamUrl || null,
+              notes: srv.notes || null,
+            }));
+            await supabase.from('funeral_services').insert(servicesToInsert);
+          }
+
+          // Insertar hitos iniciales si existen
+          if (obituary.timeline && obituary.timeline.length > 0) {
+            const timelineToInsert = obituary.timeline.map((tm) => ({
+              obituary_id: newId,
+              year: tm.year,
+              title: tm.title,
+              description: tm.description,
+              photo_url: tm.photoUrl || null,
+            }));
+            await supabase.from('timeline_events').insert(timelineToInsert);
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase create error:', err);
+      }
+    }
+
+    const newObituary: Obituary = {
+      ...obituary,
+      id: newId,
+      candlesCount: 0,
+      flowersCount: 0,
+      tributes: [],
+      timeline: obituary.timeline || [],
+      gallery: [],
+      services: obituary.services || [],
+      planId: obituary.planId || 'legado',
+      moderationRequired: obituary.moderationRequired ?? true,
+    };
+
+    const all = this.getLocalMemorials();
+    this.saveLocalMemorials([newObituary, ...all]);
+    return newObituary;
+  }
+
+  async updateObituary(updated: Obituary): Promise<void> {
+    // 1. Guardar en Supabase si está disponible
+    if (isSupabaseConfigured && supabase) {
+      try {
+        await supabase
+          .from('obituaries')
+          .update({
+            full_name: updated.fullName,
+            nickname: updated.nickname || null,
+            birth_date: updated.birthDate,
+            death_date: updated.deathDate,
+            birth_place: updated.birthPlace || null,
+            death_place: updated.deathPlace || null,
+            epitaph: updated.epitaph,
+            biography: updated.biography,
+            main_photo_url: updated.mainPhotoUrl,
+            cover_photo_url: updated.coverPhotoUrl || null,
+            is_public: updated.isPublic,
+            access_pin: updated.accessPin || '1234',
+            plan_id: updated.planId,
+            moderation_required: updated.moderationRequired,
+            font_family: updated.fontFamily || 'serif-cormorant',
+            theme_preset: updated.themePreset || 'ivory-warm',
+            primary_accent: updated.primaryAccent || 'gold',
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', updated.id);
+
+        // Sincronizar servicios
+        if (updated.services) {
+          await supabase.from('funeral_services').delete().eq('obituary_id', updated.id);
+          if (updated.services.length > 0) {
+            const mappedServices = updated.services.map((s) => ({
+              obituary_id: updated.id,
+              service_type: s.serviceType,
+              title: s.title,
+              location_name: s.locationName,
+              address: s.address,
+              date: s.date,
+              time: s.time,
+              photo_url: s.photoUrl || null,
+              google_maps_url: s.googleMapsUrl || null,
+              coordinates_lat: s.coordinatesLat || null,
+              coordinates_lng: s.coordinatesLng || null,
+              livestream_url: s.livestreamUrl || null,
+              notes: s.notes || null,
+            }));
+            await supabase.from('funeral_services').insert(mappedServices);
+          }
+        }
+
+        // Sincronizar timeline
+        if (updated.timeline) {
+          await supabase.from('timeline_events').delete().eq('obituary_id', updated.id);
+          if (updated.timeline.length > 0) {
+            const mappedTimeline = updated.timeline.map((tm) => ({
+              obituary_id: updated.id,
+              year: tm.year,
+              title: tm.title,
+              description: tm.description,
+              photo_url: tm.photoUrl || null,
+            }));
+            await supabase.from('timeline_events').insert(mappedTimeline);
+          }
+        }
+      } catch (err) {
+        console.warn('Supabase update failed:', err);
+      }
+    }
+
+    // 2. Guardar en almacenamiento local
+    const all = this.getLocalMemorials();
+    const updatedList = all.map((m) => (m.id === updated.id ? updated : m));
+    this.saveLocalMemorials(updatedList);
+  }
+
   async addTribute(params: {
     obituaryId: string;
     authorName: string;
+    authorEmail?: string;
     relationship?: string;
     message: string;
     tributeType: TributeType;
@@ -90,11 +356,42 @@ class MemorialService {
     });
 
     const isApproved = evaluation.status === 'approved';
+    let tributeId = 'trib-' + Date.now();
+
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data, error } = await supabase
+          .from('condolences_and_tributes')
+          .insert({
+            obituary_id: params.obituaryId,
+            author_name: params.authorName,
+            author_email: params.authorEmail || null,
+            relationship: params.relationship || null,
+            message: params.message,
+            tribute_type: params.tributeType,
+            candle_color: params.candleColor || null,
+            flower_type: params.flowerType || null,
+            photo_url: params.photoUrl || null,
+            is_approved: isApproved,
+            moderation_status: evaluation.status,
+            flagged_reason: evaluation.reason || null,
+          })
+          .select()
+          .single();
+
+        if (!error && data) {
+          tributeId = data.id;
+        }
+      } catch (err) {
+        console.warn('Supabase tribute insert failed:', err);
+      }
+    }
 
     const newTribute: Tribute = {
-      id: 'trib-' + Date.now(),
+      id: tributeId,
       obituaryId: params.obituaryId,
       authorName: params.authorName,
+      authorEmail: params.authorEmail,
       relationship: params.relationship || 'Familiar o Amigo',
       message: params.message,
       tributeType: params.tributeType,
@@ -106,26 +403,6 @@ class MemorialService {
       moderationStatus: evaluation.status,
       flaggedReason: evaluation.reason,
     };
-
-    if (isSupabaseConfigured && supabase) {
-      try {
-        await supabase.from('condolences_and_tributes').insert({
-          obituary_id: params.obituaryId,
-          author_name: params.authorName,
-          relationship: params.relationship,
-          message: params.message,
-          tribute_type: params.tributeType,
-          candle_color: params.candleColor,
-          flower_type: params.flowerType,
-          photo_url: params.photoUrl,
-          is_approved: isApproved,
-          moderation_status: evaluation.status,
-          flagged_reason: evaluation.reason,
-        });
-      } catch (err) {
-        console.warn('Supabase tribute insert failed:', err);
-      }
-    }
 
     // Actualizar almacenamiento local
     const updated = all.map((m) => {
@@ -226,49 +503,6 @@ class MemorialService {
     if (isSupabaseConfigured && supabase) {
       await supabase.from('obituaries').update({ moderation_required: enabled }).eq('id', obituaryId);
     }
-  }
-
-  async createObituary(obituary: Omit<Obituary, 'id' | 'candlesCount' | 'flowersCount' | 'tributes' | 'timeline' | 'gallery'>): Promise<Obituary> {
-    const newObituary: Obituary = {
-      ...obituary,
-      id: 'obit-' + Date.now(),
-      candlesCount: 0,
-      flowersCount: 0,
-      tributes: [],
-      timeline: [],
-      gallery: [],
-      planId: obituary.planId || 'legado',
-      moderationRequired: obituary.moderationRequired ?? true,
-    };
-
-    if (isSupabaseConfigured && supabase) {
-      try {
-        await supabase.from('obituaries').insert({
-          slug: newObituary.slug,
-          full_name: newObituary.fullName,
-          nickname: newObituary.nickname,
-          birth_date: newObituary.birthDate,
-          death_date: newObituary.deathDate,
-          birth_place: newObituary.birthPlace,
-          death_place: newObituary.deathPlace,
-          epitaph: newObituary.epitaph,
-          biography: newObituary.biography,
-          main_photo_url: newObituary.mainPhotoUrl,
-          cover_photo_url: newObituary.coverPhotoUrl,
-          is_public: newObituary.isPublic,
-          plan_id: newObituary.planId,
-          moderation_required: newObituary.moderationRequired,
-          owner_email: newObituary.ownerEmail,
-          owner_name: newObituary.ownerName,
-        });
-      } catch (err) {
-        console.warn('Supabase create error:', err);
-      }
-    }
-
-    const all = this.getLocalMemorials();
-    this.saveLocalMemorials([newObituary, ...all]);
-    return newObituary;
   }
 }
 

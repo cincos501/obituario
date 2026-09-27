@@ -11,8 +11,10 @@ import {
   ZoomOut, 
   RotateCcw, 
   Check, 
-  Maximize2 
+  Maximize2,
+  Loader2
 } from 'lucide-react';
+import { supabaseStorageService, StorageFolder } from '../../services/supabaseStorageService';
 
 interface Props {
   label: string;
@@ -21,6 +23,7 @@ interface Props {
   helperText?: string;
   aspectRatio?: 'square' | 'wide' | 'round';
   cropShape?: 'round' | 'rect' | 'wide';
+  folder?: StorageFolder;
 }
 
 export const ImageUploader = ({
@@ -30,9 +33,11 @@ export const ImageUploader = ({
   helperText = 'Formatos recomendados: JPG, PNG o WebP. Máx. 10MB.',
   aspectRatio = 'square',
   cropShape,
+  folder = 'portraits',
 }: Props) => {
   const [previewUrl, setPreviewUrl] = useState<string>(initialUrl);
   const [originalUrl, setOriginalUrl] = useState<string>(initialUrl);
+  const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState<string>('');
   const [isCropperOpen, setIsCropperOpen] = useState(false);
@@ -225,10 +230,11 @@ export const ImageUploader = ({
     ctx.drawImage(img, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight);
     ctx.restore();
 
+    let finalImg = originalUrl;
     try {
-      const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.92);
-      setPreviewUrl(croppedDataUrl);
-      onImageSelected(croppedDataUrl);
+      finalImg = canvas.toDataURL('image/jpeg', 0.92);
+      setPreviewUrl(finalImg);
+      onImageSelected(finalImg);
     } catch {
       // Fallback a original si hay problemas de cross-origin
       setPreviewUrl(originalUrl);
@@ -236,12 +242,35 @@ export const ImageUploader = ({
     }
 
     setIsCropperOpen(false);
+
+    // Subir a Supabase Storage bucket 'memoriales' en segundo plano
+    setIsUploading(true);
+    supabaseStorageService.uploadImage(finalImg, folder, fileName || 'foto')
+      .then((uploadedUrl) => {
+        if (uploadedUrl && uploadedUrl.startsWith('http')) {
+          setPreviewUrl(uploadedUrl);
+          onImageSelected(uploadedUrl);
+        }
+      })
+      .catch((err) => console.warn('Supabase storage upload error:', err))
+      .finally(() => setIsUploading(false));
   };
 
   const handleUseOriginal = () => {
     setPreviewUrl(originalUrl);
     onImageSelected(originalUrl);
     setIsCropperOpen(false);
+
+    setIsUploading(true);
+    supabaseStorageService.uploadImage(originalUrl, folder, fileName || 'foto')
+      .then((uploadedUrl) => {
+        if (uploadedUrl && uploadedUrl.startsWith('http')) {
+          setPreviewUrl(uploadedUrl);
+          onImageSelected(uploadedUrl);
+        }
+      })
+      .catch((err) => console.warn('Supabase storage upload error:', err))
+      .finally(() => setIsUploading(false));
   };
 
   const handleResetAdjustments = () => {
@@ -256,18 +285,26 @@ export const ImageUploader = ({
         <label className="block text-xs font-semibold text-[#544D46]">
           {label}
         </label>
-        {effectiveShape === 'round' && (
-          <span className="flex items-center gap-1 text-[11px] text-[#8C6B32] font-medium bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#E8D7B0]">
-            <Crop className="w-3 h-3 text-[#C29837]" />
-            <span>Retrato Circular</span>
-          </span>
-        )}
-        {effectiveShape === 'wide' && (
-          <span className="flex items-center gap-1 text-[11px] text-[#8C6B32] font-medium bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#E8D7B0]">
-            <Crop className="w-3 h-3 text-[#C29837]" />
-            <span>Paisaje Panorámico</span>
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {isUploading && (
+            <span className="flex items-center gap-1.5 text-[11px] text-[#8C6B32] font-medium bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#E8D7B0] animate-pulse">
+              <Loader2 className="w-3 h-3 animate-spin text-[#C29837]" />
+              <span>Guardando en Storage...</span>
+            </span>
+          )}
+          {effectiveShape === 'round' && (
+            <span className="flex items-center gap-1 text-[11px] text-[#8C6B32] font-medium bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#E8D7B0]">
+              <Crop className="w-3 h-3 text-[#C29837]" />
+              <span>Retrato Circular</span>
+            </span>
+          )}
+          {effectiveShape === 'wide' && (
+            <span className="flex items-center gap-1 text-[11px] text-[#8C6B32] font-medium bg-[#FAF4E8] px-2.5 py-0.5 rounded-full border border-[#E8D7B0]">
+              <Crop className="w-3 h-3 text-[#C29837]" />
+              <span>Paisaje Panorámico</span>
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Zona de Carga / Vista Previa Cálida y Limpia */}

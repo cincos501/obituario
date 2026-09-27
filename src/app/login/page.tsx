@@ -56,26 +56,11 @@ function LoginForm() {
     }
   };
 
-  const handleDemoLogin = async (type: 'admin' | 'esencial' | 'legado' | 'infinito') => {
+  const handleDemoAdminLogin = async () => {
     setIsLoading(true);
     setError(null);
-    let id = '';
-    let pass = '';
-
-    if (type === 'admin') {
-      id = 'admin@hobituario.com';
-      pass = 'admin123';
-    } else if (type === 'esencial') {
-      id = 'esencial@hobituario.com';
-      pass = 'esencial123';
-    } else if (type === 'legado') {
-      id = 'legado@hobituario.com';
-      pass = 'legado123';
-    } else if (type === 'infinito') {
-      id = 'infinito@hobituario.com';
-      pass = 'infinito123';
-    }
-
+    const id = 'admin@hobituario.com';
+    const pass = 'admin123';
     setIdentifier(id);
     setPassword(pass);
 
@@ -189,80 +174,35 @@ function LoginForm() {
             </button>
           </form>
 
-          {/* Accesos de Prueba Rápidos */}
+          {/* Acceso Rápido Super Admin */}
           <div className="pt-4 border-t border-[#F2ECE1] space-y-2.5">
             <p className="text-[11px] font-semibold text-[#8C847A] uppercase tracking-wider text-center">
-              Accesos de Prueba por Membresía (1 Clic)
+              Acceso Rápido de Administración
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('esencial')}
-                className="p-3 rounded-2xl border border-[#D8CABE] bg-[#FAF7F2] hover:bg-[#F2ECE1] text-left transition-all cursor-pointer group hover:border-[#C29837]"
-              >
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAE2D5] text-[#544D46]">
-                    Plan Esencial ($19)
-                  </span>
+            <button
+              type="button"
+              onClick={handleDemoAdminLogin}
+              className="w-full p-3.5 rounded-2xl border border-[#D8CABE] bg-[#FAF7F2] hover:bg-[#F2ECE1] text-left transition-all cursor-pointer group hover:border-[#C29837] flex items-center justify-between"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-[#FAF3E3] text-[#C29837] flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#2D2926]">
-                  <Heart className="w-3.5 h-3.5 text-[#C29837]" />
-                  <span>Don Antonio Roca</span>
+                <div>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#2D2926]">
+                    <span>Super Admin de la Plataforma</span>
+                    <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#FAF3E3] text-[#C29837]">
+                      1 Clic
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-[#7A7167]">admin@hobituario.com • Panel global de control</p>
                 </div>
-                <p className="text-[10px] text-[#7A7167] mt-0.5">5 fotos • 3 ceremonias • 10 hitos</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('legado')}
-                className="p-3 rounded-2xl border border-[#C29837]/60 bg-[#FFFDF9] hover:bg-[#FAF3E3] text-left transition-all cursor-pointer group shadow-xs"
-              >
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FAF3E3] text-[#C29837] border border-[#E8D7B0]">
-                    Plan Legado ($49) ★
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#2D2926]">
-                  <Flame className="w-3.5 h-3.5 text-[#C29837] animate-flame" />
-                  <span>Dr. Carlos Mendoza</span>
-                </div>
-                <p className="text-[10px] text-[#7A7167] mt-0.5">Fotos ilimitadas • Biografía • Velas</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('infinito')}
-                className="p-3 rounded-2xl border border-[#D8CABE] bg-[#FAF7F2] hover:bg-[#F2ECE1] text-left transition-all cursor-pointer group hover:border-[#C29837]"
-              >
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#2D2926] text-white">
-                    Plan Infinito ($99)
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#2D2926]">
-                  <Heart className="w-3.5 h-3.5 text-[#9E4232]" />
-                  <span>Dra. Beatriz Valdivia</span>
-                </div>
-                <p className="text-[10px] text-[#7A7167] mt-0.5">Todo ilimitado • Livestream • PWA</p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('admin')}
-                className="p-3 rounded-2xl border border-[#D8CABE] bg-[#FAF7F2] hover:bg-[#F2ECE1] text-left transition-all cursor-pointer group hover:border-[#C29837]"
-              >
-                <div className="flex items-center justify-between gap-1 mb-1">
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#FAF3E3] text-[#C29837]">
-                    Super Admin
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-[#2D2926]">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#C29837]" />
-                  <span>Dueño Plataforma</span>
-                </div>
-                <p className="text-[10px] text-[#7A7167] mt-0.5">Gestión de todos los memoriales</p>
-              </button>
-            </div>
+              </div>
+              <ArrowRight className="w-4 h-4 text-[#8C847A] group-hover:text-[#2D2926] transition-transform group-hover:translate-x-0.5" />
+            </button>
+            <p className="text-[11px] text-center text-[#8C847A] pt-1">
+              Las familias titulares acceden directamente ingresando su correo o código y PIN generado al crear su memorial.
+            </p>
           </div>
         </div>
       )}

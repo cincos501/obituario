@@ -14,7 +14,7 @@ export interface AuthUser {
 const STORAGE_KEY = 'hobituario_auth_session_v1';
 const USERS_STORAGE_KEY = 'hobituario_users_db_v1';
 
-// Cuentas predefinidas del sistema (Super Admin y 3 Cuentas por Nivel de Membresía)
+// Cuentas predefinidas del sistema (Super Admin)
 const DEFAULT_USERS: { email: string; password: string; user: AuthUser }[] = [
   {
     email: 'admin@hobituario.com',
@@ -25,55 +25,6 @@ const DEFAULT_USERS: { email: string; password: string; user: AuthUser }[] = [
       role: 'super_admin',
       name: 'Super Admin (Dueño de la Plataforma)',
       createdAt: '2026-01-01T00:00:00Z',
-    },
-  },
-  {
-    email: 'esencial@hobituario.com',
-    password: 'esencial123',
-    user: {
-      id: 'usr-esencial-1',
-      email: 'esencial@hobituario.com',
-      role: 'family_owner',
-      name: 'Familia Roca (Plan Esencial)',
-      memorialSlug: 'antonio-roca-1955',
-      createdAt: '2026-02-10T00:00:00Z',
-    },
-  },
-  {
-    email: 'legado@hobituario.com',
-    password: 'legado123',
-    user: {
-      id: 'usr-legado-1',
-      email: 'legado@hobituario.com',
-      role: 'family_owner',
-      name: 'Mariana de Mendoza (Plan Legado)',
-      memorialSlug: 'carlos-alberto-mendoza-1948',
-      createdAt: '2026-03-20T00:00:00Z',
-    },
-  },
-  {
-    email: 'infinito@hobituario.com',
-    password: 'infinito123',
-    user: {
-      id: 'usr-infinito-1',
-      email: 'infinito@hobituario.com',
-      role: 'family_owner',
-      name: 'Familia Valdivia (Plan Infinito)',
-      memorialSlug: 'beatriz-valdivia-1942',
-      createdAt: '2026-01-15T00:00:00Z',
-    },
-  },
-  // Alias de compatibilidad para familia Mendoza
-  {
-    email: 'familia.mendoza@email.com',
-    password: 'mendoza123',
-    user: {
-      id: 'usr-legado-1',
-      email: 'familia.mendoza@email.com',
-      role: 'family_owner',
-      name: 'Mariana de Mendoza (Plan Legado)',
-      memorialSlug: 'carlos-alberto-mendoza-1948',
-      createdAt: '2026-03-20T00:00:00Z',
     },
   },
 ];

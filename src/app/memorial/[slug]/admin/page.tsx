@@ -277,10 +277,7 @@ export default function FamilyDashboardPage() {
         primaryAccent,
       };
 
-      const all = await memorialService.getAll();
-      const updatedList = all.map((m) => (m.id === memorial.id ? updated : m));
-      localStorage.setItem('hobituario_memorials_v1', JSON.stringify(updatedList));
-
+      await memorialService.updateObituary(updated);
       setMemorial(updated);
       showNotification('Los cambios de diseño e información han sido guardados con éxito.');
     } catch (err) {

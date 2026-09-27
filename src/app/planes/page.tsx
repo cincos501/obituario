@@ -2,15 +2,33 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Navbar } from '../../components/common/Navbar';
 import { SUBSCRIPTION_PLANS } from '../../data/plans';
 import { SubscriptionPlan } from '../../types/memorial';
-import { Flame, Check, MessageCircle, Heart, HelpCircle, Calendar, Sparkles } from 'lucide-react';
+import { BanecoCheckoutModal } from '../../components/payment/BanecoCheckoutModal';
+import { 
+  Flame, 
+  Check, 
+  MessageCircle, 
+  Heart, 
+  HelpCircle, 
+  Calendar, 
+  Sparkles,
+  QrCode,
+  Building2,
+  Lock,
+  ArrowRight
+} from 'lucide-react';
 
 export default function PlansPage() {
+  const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(SUBSCRIPTION_PLANS[1]);
   const [billingCycle, setBillingCycle] = useState<'one-time' | 'annual'>('one-time');
-  const whatsappNumber = '59170000000'; // Puedes reemplazarlo por tu número
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState<SubscriptionPlan>(SUBSCRIPTION_PLANS[1]);
+
+  const whatsappNumber = '59170000000';
 
   const getWhatsAppUrl = (plan: SubscriptionPlan) => {
     const cycleText = billingCycle === 'one-time' ? 'Pago Único (5 Años)' : 'Membresía Anual';
@@ -20,6 +38,16 @@ export default function PlansPage() {
     return `https://wa.me/${whatsappNumber}?text=${text}`;
   };
 
+  const handleOpenCheckout = (plan: SubscriptionPlan, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setCheckoutPlan(plan);
+    setIsCheckoutOpen(true);
+  };
+
+  const handlePaymentSuccess = (tx: any) => {
+    router.push(`/crear?plan=${tx.planId}&tx=${tx.transactionNumber}`);
+  };
+
   return (
     <div className="min-h-screen bg-[#FBF9F5] text-[#2D2926] flex flex-col selection:bg-[#E8DED1]">
       <Navbar />
@@ -27,13 +55,18 @@ export default function PlansPage() {
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-12">
         {/* Encabezado */}
         <div className="text-center max-w-3xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FAF3E3] border border-[#E8D7B0] text-[#8C6B32] text-xs font-semibold mb-4">
+            <Building2 className="w-3.5 h-3.5" />
+            <span>Pasarela Oficial Banco Económico (Baneco) • QR Simple & Tarjetas</span>
+          </div>
+
           <h1 className="font-memorial text-3xl sm:text-5xl text-[#2D2926] font-normal tracking-tight mb-4">
             Planes Diseñados para Honrar <br />
             <span className="font-script text-[#A67C24]">con Amor y Distinción</span>
           </h1>
 
           <p className="text-xs sm:text-sm text-[#736B63] max-w-xl mx-auto leading-relaxed mb-6">
-            Asegura que las fotos, videos, anécdotas y condolencias de tu ser querido permanezcan protegidas en servidores de alta disponibilidad.
+            Asegura que las fotos, videos, anécdotas y condolencias de tu ser querido permanezcan protegidas en servidores de alta disponibilidad con respaldo garantizado.
           </p>
 
           {/* Selector de Modalidad: Pago Único vs Anual */}
@@ -72,7 +105,7 @@ export default function PlansPage() {
               <div
                 key={plan.id}
                 onClick={() => setSelectedPlan(plan)}
-                className={`bg-white rounded-3xl p-7 transition-all duration-300 relative flex flex-col justify-between cursor-pointer border ${
+                className={`bg-white rounded-3xl p-7 transition-all duration-300 relative flex flex-col justify-between border ${
                   plan.isPopular
                     ? 'border-[#C29837] shadow-xl ring-2 ring-[#C29837]/20 scale-102'
                     : 'border-[#EAE4D8] shadow-sm hover:shadow-md'
@@ -117,23 +150,33 @@ export default function PlansPage() {
                   </ul>
                 </div>
 
-                {/* Botón WhatsApp de adquisición */}
-                <div className="pt-4 border-t border-[#F2ECE1]">
+                {/* Botones de Pago y Adquisición */}
+                <div className="pt-4 border-t border-[#F2ECE1] space-y-2.5">
+                  <button
+                    type="button"
+                    onClick={(e) => handleOpenCheckout(plan, e)}
+                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm cursor-pointer ${
+                      plan.isPopular
+                        ? 'bg-[#8C6B32] hover:bg-[#785924] text-white shadow-md'
+                        : 'bg-[#2D2926] hover:bg-[#433E3A] text-white'
+                    }`}
+                  >
+                    <QrCode className="w-4 h-4 text-[#F5C354]" />
+                    <span>Pagar con Baneco (QR / Tarjeta)</span>
+                  </button>
+
                   <a
                     href={getWhatsAppUrl(plan)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-xs font-semibold transition-all shadow-sm ${
-                      plan.isPopular
-                        ? 'bg-[#25D366] hover:bg-[#20ba5a] text-white shadow-md'
-                        : 'bg-[#8C6B32] hover:bg-[#785924] text-white'
-                    }`}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-[11px] font-semibold transition-all border border-[#D8CABE] bg-[#FAF7F2] text-[#544D46] hover:bg-[#F2ECE1]"
                   >
-                    <MessageCircle className="w-4 h-4 fill-white" />
-                    <span>Adquirir Plan por WhatsApp</span>
+                    <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" />
+                    <span>Adquirir por WhatsApp</span>
                   </a>
-                  <p className="text-[10px] text-center text-[#9E9488] mt-2">
-                    Atención y soporte inmediato para familias
+
+                  <p className="text-[10px] text-center text-[#9E9488]">
+                    Activación inmediata con comprobante digital
                   </p>
                 </div>
               </div>
@@ -156,13 +199,21 @@ export default function PlansPage() {
             href={`https://wa.me/${whatsappNumber}?text=${encodeURIComponent('Hola, necesito asesoría personalizada para crear el memorial de un familiar en Hobituario.')}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#25D366] text-white text-xs sm:text-sm font-semibold hover:bg-[#20ba5a] shadow-md transition-all"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#25D366] text-white text-xs sm:text-sm font-semibold hover:bg-[#20ba5a] shadow-md transition-all cursor-pointer"
           >
-            <MessageCircle className="w-4 h-4 fill-white" />
+            <MessageCircle className="w-4 h-4 fill-white text-[#25D366]" />
             <span>Hablar con un Asesor por WhatsApp</span>
           </a>
         </div>
       </main>
+
+      {/* Modal Checkout Baneco */}
+      <BanecoCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        plan={checkoutPlan}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
     </div>
   );
 }
